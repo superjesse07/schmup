@@ -3,10 +3,96 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
-snapshots:
-- completed:
-    size: 524127
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/6.yaml
-    sha256: dc70dfb45e2c32f54719819bd055f46855dd4b3bd2e58b9f3f38729a2d553fbb
-  original: lts-14.6
+snapshots: []
+packages:
+- original:
+    hackage: gloss-1.13.2.1@sha256:273d02d30e1896932d45424dab6022a16986c0ed3eef6937776b5f40854ce51c,4075
+  completed:
+    pantry-tree:
+      sha256: 1bcac9962bad9412bfb3c3a694fcdaae7097ee4071b03fc1dc5ab6047baad01b
+      size: 3807
+    hackage: gloss-1.13.2.1@sha256:273d02d30e1896932d45424dab6022a16986c0ed3eef6937776b5f40854ce51c,4075
+- original:
+    hackage: random-1.2.1@sha256:8bee24dc0c985a90ee78d94c61f8aed21c49633686f0f1c14c5078d818ee43a2,6598
+  completed:
+    pantry-tree:
+      sha256: 8bdc994ce41f43624ab42302a881fe5a0f81d965f5d238841e24943664681a06
+      size: 1528
+    hackage: random-1.2.1@sha256:8bee24dc0c985a90ee78d94c61f8aed21c49633686f0f1c14c5078d818ee43a2,6598
+- original:
+    hackage: GLUT-2.7.0.16@sha256:a7da60bef0d06eb501a2abd0d5068a89fa2c2daf5fee4b607df62395543ba6b0,24054
+  completed:
+    pantry-tree:
+      sha256: 31d1c5020333d3f38db96d88e2a229da7f73ef95174be286a67a09525f9aefd9
+      size: 9538
+    hackage: GLUT-2.7.0.16@sha256:a7da60bef0d06eb501a2abd0d5068a89fa2c2daf5fee4b607df62395543ba6b0,24054
+- original:
+    hackage: OpenGL-3.0.3.0@sha256:811cf7cf2f325bde04efb021ef9b6a86a3b7383583f4bc6471b7a66c56ae889c,7985
+  completed:
+    pantry-tree:
+      sha256: 1e7768ac1d08d7bacfd7777de99bf23021504c89b76e910ac79d0d12bf4aad12
+      size: 11166
+    hackage: OpenGL-3.0.3.0@sha256:811cf7cf2f325bde04efb021ef9b6a86a3b7383583f4bc6471b7a66c56ae889c,7985
+- original:
+    hackage: bmp-1.2.6.3@sha256:cd0cf81cd10a47e0d075ae83df0d63f4abdaf429e03d18f89f3dd3378f835be1,1314
+  completed:
+    pantry-tree:
+      sha256: fd2617842978d2337e47d64d0f6c74fd4cba58db14e52b4fa00794357fbd90c2
+      size: 882
+    hackage: bmp-1.2.6.3@sha256:cd0cf81cd10a47e0d075ae83df0d63f4abdaf429e03d18f89f3dd3378f835be1,1314
+- original:
+    hackage: gloss-rendering-1.13.1.1@sha256:e7e1e16596a0b30dfc35c8f09685fc0642faefa8729227abaad99bdb2f1ba883,1715
+  completed:
+    pantry-tree:
+      sha256: f16864d3b42b89407dac6d0959601e127147ed2bd3ce8f0cba8a9afbc0b3a2a2
+      size: 895
+    hackage: gloss-rendering-1.13.1.1@sha256:e7e1e16596a0b30dfc35c8f09685fc0642faefa8729227abaad99bdb2f1ba883,1715
+- original:
+    hackage: splitmix-0.1.0.3@sha256:fc3aae74c467f4b608050bef53aec17904a618731df9407e655d8f3bf8c32d5c,6049
+  completed:
+    pantry-tree:
+      sha256: 8290f921f41c3628a6c9871502e57fd1d25f5954967afbf4ed16717fd8d3656f
+      size: 1400
+    hackage: splitmix-0.1.0.3@sha256:fc3aae74c467f4b608050bef53aec17904a618731df9407e655d8f3bf8c32d5c,6049
+- original:
+    hackage: GLURaw-2.0.0.4@sha256:4cf1d891f1960a941ff315eae8e229cfd6e36fc793d6546d837e866d9de13f8d,2378
+  completed:
+    pantry-tree:
+      sha256: 7c1df3644b96a8b3f91c935521e5e7ab578b14135324a807eb54acd0bce957b9
+      size: 712
+    hackage: GLURaw-2.0.0.4@sha256:4cf1d891f1960a941ff315eae8e229cfd6e36fc793d6546d837e866d9de13f8d,2378
+- original:
+    hackage: ObjectName-1.1.0.1@sha256:de422b3691ffa4fee0112c750fccc3d2edcab6aa876a0ad71c364f1200f43b52,976
+  completed:
+    pantry-tree:
+      sha256: d2b1af158e141393d23ce143b8cc2255a62da9af11b08f83d9583a814f0a15ba
+      size: 264
+    hackage: ObjectName-1.1.0.1@sha256:de422b3691ffa4fee0112c750fccc3d2edcab6aa876a0ad71c364f1200f43b52,976
+- original:
+    hackage: OpenGLRaw-3.3.4.0@sha256:26685d56510ea0332cd8657c5d035c5b48a743725a512e561365ce072e60d27c,25510
+  completed:
+    pantry-tree:
+      sha256: a7fd7cc558224c64bf7051a2027ae8bb517cbb5a79a43c37e3fac01e5f6c2aca
+      size: 48782
+    hackage: OpenGLRaw-3.3.4.0@sha256:26685d56510ea0332cd8657c5d035c5b48a743725a512e561365ce072e60d27c,25510
+- original:
+    hackage: StateVar-1.2.2@sha256:3c022c00485fe165e3080d5da6b3ca9c9b02f62c5deebc584d1b3d1309ce673e,1673
+  completed:
+    pantry-tree:
+      sha256: 204cac98219e99334f47b12c565945611748ea03a4d629273dd697d738bcfd7f
+      size: 314
+    hackage: StateVar-1.2.2@sha256:3c022c00485fe165e3080d5da6b3ca9c9b02f62c5deebc584d1b3d1309ce673e,1673
+- original:
+    hackage: fixed-0.3@sha256:f76bb14011911bdd9d71ecc16ffc8000821adfefdd48b38f952b2484900f37f6,868
+  completed:
+    pantry-tree:
+      sha256: 6ab63adf4af4b898400af30d98bc31669c8509c20067ccd04831264991bc78b2
+      size: 426
+    hackage: fixed-0.3@sha256:f76bb14011911bdd9d71ecc16ffc8000821adfefdd48b38f952b2484900f37f6,868
+- original:
+    hackage: half-0.3.1@sha256:5aabf5325762b2d6335b9e3f88602431af2b954e14b058bea3e93168a8e0eb53,2058
+  completed:
+    pantry-tree:
+      sha256: e44f2e2dba15466712f8a5c523bdccb2e6c7e70506a23e6d45766f82fcbbd4b0
+      size: 502
+    hackage: half-0.3.1@sha256:5aabf5325762b2d6335b9e3f88602431af2b954e14b058bea3e93168a8e0eb53,2058
