@@ -3,6 +3,7 @@
 module Model where
 
 import Graphics.Gloss.Data.Vector (Vector)
+import System.Random
 
 data InfoToShow
   = ShowNothing
@@ -13,7 +14,7 @@ nO_SECS_BETWEEN_CYCLES :: Float
 nO_SECS_BETWEEN_CYCLES = 5
 
 data GameState
-  = MenuState
+  = MenuState { rng :: StdGen }
   | PlayingState
       { elapsedTime :: Float,
         player :: Player,
@@ -25,10 +26,12 @@ data GameState
         bullets :: [Bullet],
         lasers :: [Laser],
         playingScore :: Int,
-        paused :: Bool
+        paused :: Bool,
+        rng :: StdGen
       }
   | GameOverState
-      { finalScore :: Int
+      { finalScore :: Int,
+        rng :: StdGen 
       }
 
 data Gun = LaserGun | DefaultGun | BurstGun

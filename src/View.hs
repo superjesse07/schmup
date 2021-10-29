@@ -9,4 +9,4 @@ view :: GameState -> IO Picture
 view = return . viewPure
 
 viewPure :: GameState -> Picture
-viewPure gstate = color green (circle 80)
+viewPure gstate = color white (text "Hello world!")
