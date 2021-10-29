@@ -4,6 +4,8 @@ import Controller
 import Model
 import View
 
+-- if it doesn't work on linux: run mesa-demo first
+
 import Graphics.Gloss.Interface.IO.Game
 
 main :: IO ()
