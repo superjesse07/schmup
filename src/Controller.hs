@@ -3,7 +3,7 @@
 module Controller where
 
 import Model
-
+import Control.Monad.State.Lazy
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
@@ -20,9 +20,9 @@ input :: Event -> GameState -> IO GameState
 input e gstate = return (inputKey e gstate)
 
 -- TODO: use monads for this, as it makes it a lot easier to do with do ... return
-inputKey :: Event -> GameState -> GameState
+inputKey :: Event -> State GameState ()
 -- on enter pressed, switch to the playing state
-inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState { rng = x} = MenuState { rng = x }
+-- inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState { rng = x} = MenuState { rng = x }
 
 -- if we are in game over and enter is pressed, move to the game state again
 
@@ -33,4 +33,12 @@ inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState { rng = x} = MenuState
 --inputKey (EventKey (Char c) _ _ _) gstate
   -- = -- If the user presses a character key, show that one
     --gstate { infoToShow = ShowAChar c }
-inputKey _ gstate = gstate -- Otherwise keep the same
+-- it's possible to update parts
+-- gs { pos (x, y + speed)}
+--  where (x,y) = pos gs
+-- https://wiki.haskell.org/State_Monad
+inputKey _ = 
+  do
+    gs <- get
+    let x = rng gs
+    return ()
