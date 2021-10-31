@@ -7,7 +7,7 @@ import Model
 
 view :: GameState -> IO Picture
 view gamestate = do picture <- loadBMP "assets/ship.bmp"
-                    return$picture
+                    return$scale 4 4 picture
 
 viewPure :: GameState -> Picture
 viewPure gamestate = color white (text "Hello world!")
