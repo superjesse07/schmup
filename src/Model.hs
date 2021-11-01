@@ -1,7 +1,7 @@
 -- | This module contains the data types
 --   which represent the state of the game
 module Model where
-
+import Graphics.Gloss
 import Graphics.Gloss.Data.Vector (Vector)
 import System.Random
 
@@ -10,11 +10,17 @@ data InfoToShow
   | ShowANumber Int
   | ShowAChar Char
 
+newtype Assets = Assets { 
+  playerSprite :: Picture
+}
+
 nO_SECS_BETWEEN_CYCLES :: Float
 nO_SECS_BETWEEN_CYCLES = 5
 
 data GameState
-  = MenuState { rng :: StdGen }
+  = MenuState { rng :: StdGen, 
+        assets :: Assets 
+      }
   | PlayingState
       { elapsedTime :: Float,
         player :: Player,
@@ -27,11 +33,13 @@ data GameState
         lasers :: [Laser],
         playingScore :: Int,
         paused :: Bool,
-        rng :: StdGen
+        rng :: StdGen,
+        assets :: Assets
       }
   | GameOverState
       { finalScore :: Int,
-        rng :: StdGen 
+        rng :: StdGen,
+        assets :: Assets
       }
 
 data Gun = LaserGun | DefaultGun | BurstGun

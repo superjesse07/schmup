@@ -6,8 +6,7 @@ import Graphics.Gloss
 import Model
 
 view :: GameState -> IO Picture
-view gamestate = do picture <- loadBMP "assets/ship.bmp"
-                    return$picture
+view gamestate = do return (playerSprite (assets gamestate))
 
 viewPure :: GameState -> Picture
 viewPure gamestate = color white (text "Hello world!")

@@ -8,8 +8,8 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
 
-initialState :: StdGen -> GameState 
-initialState = MenuState 
+initialState :: StdGen -> Assets -> GameState 
+initialState gen assets = MenuState { assets = assets, rng = gen }
 
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
