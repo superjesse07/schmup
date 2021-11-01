@@ -27,11 +27,11 @@ playerStep p dt = p { playerPosition = playerVelocity p `vectorAdd` playerPositi
 -- bit verbose but hey ho
 playerInput :: Player -> Event -> Player
 -- up
-playerInput p (EventKey (SpecialKey KeyUp) Up _ _) = playerAddVelocity p (0.0, 10.0)
-playerInput p (EventKey (SpecialKey KeyUp) Down _ _) = playerAddVelocity p (0.0, -10.0)
+playerInput p (EventKey (SpecialKey KeyUp) Up _ _) = playerAddVelocity p (0.0, -10.0)
+playerInput p (EventKey (SpecialKey KeyUp) Down _ _) = playerAddVelocity p (0.0, 10.0)
 -- down
-playerInput p (EventKey (SpecialKey KeyDown) Up _ _) = playerAddVelocity p (0.0, -10.0)
-playerInput p (EventKey (SpecialKey KeyDown) Down _ _) = playerAddVelocity p (0.0, 10.0)
+playerInput p (EventKey (SpecialKey KeyDown) Up _ _) = playerAddVelocity p (0.0, 10.0)
+playerInput p (EventKey (SpecialKey KeyDown) Down _ _) = playerAddVelocity p (0.0, -10.0)
 -- left
 playerInput p (EventKey (SpecialKey KeyLeft) Up _ _) = playerAddVelocity p (10.0, 0.0)
 playerInput p (EventKey (SpecialKey KeyLeft) Down _ _) = playerAddVelocity p (-10.0, 0.0)
