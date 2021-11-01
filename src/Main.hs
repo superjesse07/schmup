@@ -1,21 +1,21 @@
 module Main where
-import Graphics.Gloss
-import Controller
-import Model
-import View
-import Assets
-import System.Random
+import           Assets
+import           Controller
+import           Graphics.Gloss
+import           Model
+import           System.Random
+import           View
 
 -- if it doesn't work on linux: run mesa-demo first
 
-import Graphics.Gloss.Interface.IO.Game
+import           Graphics.Gloss.Interface.IO.Game
 
 main :: IO ()
-main = do 
+main = do
        rng <- newStdGen -- rng
        -- load the sprites
        playerSprite <- loadBMP "assets/ship.bmp" -- sprites
-       
+
        -- make the assets
        let assets = Assets {
               playerSprite = playerSprite

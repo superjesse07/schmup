@@ -1,11 +1,11 @@
 -- | This module contains the data types
 --   which represent the state of the game
 module Model where
-import Graphics.Gloss
-import Graphics.Gloss.Data.Vector (Vector)
-import System.Random
-import Player
-import Assets
+import           Assets
+import           Graphics.Gloss
+import           Graphics.Gloss.Data.Vector (Vector)
+import           Player
+import           System.Random
 
 data InfoToShow
   = ShowNothing
@@ -16,8 +16,8 @@ nO_SECS_BETWEEN_CYCLES :: Float
 nO_SECS_BETWEEN_CYCLES = 5
 
 data GameState
-  = MenuState { rng :: StdGen, 
-        assets :: Assets 
+  = MenuState { rng :: StdGen,
+        assets      :: Assets
       }
   | PlayingState
       { --elapsedTime :: Float,
@@ -31,13 +31,13 @@ data GameState
         --lasers :: [Laser],
         --playingScore :: Int,
         --paused :: Bool,
-        rng :: StdGen,
+        rng    :: StdGen,
         assets :: Assets
       }
   | GameOverState
       { finalScore :: Int,
-        rng :: StdGen,
-        assets :: Assets
+        rng        :: StdGen,
+        assets     :: Assets
       }
 
 data Gun = LaserGun | DefaultGun | BurstGun
@@ -52,49 +52,49 @@ class Moveable a where
   move :: a -> a
 
 data Animation = Animation
-  { frame :: Int,
+  { frame          :: Int,
     animationTimer :: Float
   }
 
 data Explosion = Explosion
   { explosionAnimation :: Animation,
-    explosionsLeft :: Int
+    explosionsLeft     :: Int
   }
 
 data Bullet = Bullet
   { bulletPosition :: Vector,
     bulletVelocity :: Vector,
-    bulletOwner :: OwnerShip
+    bulletOwner    :: OwnerShip
   }
 
 data Laser = Laser
-  { laserPosition :: Vector,
-    laserOwner :: OwnerShip,
+  { laserPosition  :: Vector,
+    laserOwner     :: OwnerShip,
     laserAnimation :: Animation
   }
 
 data Turret = Turret
   { turretPosition :: Vector,
-    turretHealth :: Int
+    turretHealth   :: Int
   }
 
 data Fighter = Fighter
-  { fighterPosition :: Vector,
-    fighterHealth :: Int,
-    fighterVelocity :: Vector,
+  { fighterPosition  :: Vector,
+    fighterHealth    :: Int,
+    fighterVelocity  :: Vector,
     fighterAnimation :: Animation
   }
 
 data Tank = Tank
-  { tankPosition :: Vector,
-    tankHealth :: Int,
-    tankVelocity :: Vector,
+  { tankPosition  :: Vector,
+    tankHealth    :: Int,
+    tankVelocity  :: Vector,
     tankAnimation :: Animation
   }
 
 data CargoShip = CargoShip
-  { cargoShipPosition :: Vector,
-    cargoShipHealth :: Int,
-    cargoShipVelocity :: Vector,
+  { cargoShipPosition  :: Vector,
+    cargoShipHealth    :: Int,
+    cargoShipVelocity  :: Vector,
     cargoShipAnimation :: Animation
   }

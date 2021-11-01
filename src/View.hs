@@ -2,10 +2,10 @@
 --   the game state into a picture
 module View where
 
-import Graphics.Gloss
-import Model
-import Player
-import Assets
+import           Assets
+import           Graphics.Gloss
+import           Model
+import           Player
 
 view :: GameState -> IO Picture
 view = return . scale 4 4 . viewPure

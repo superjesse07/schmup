@@ -1,6 +1,6 @@
 module Assets where
 
-import Graphics.Gloss.Data.Picture (Picture)
+import           Graphics.Gloss.Data.Picture (Picture)
 
 
 newtype Assets = Assets {

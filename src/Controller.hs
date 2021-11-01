@@ -2,12 +2,12 @@
 --   in response to time and user input
 module Controller where
 
-import Assets
-import Graphics.Gloss
-import Graphics.Gloss.Interface.IO.Game
-import Model
-import Player
-import System.Random
+import           Assets
+import           Graphics.Gloss
+import           Graphics.Gloss.Interface.IO.Game
+import           Model
+import           Player
+import           System.Random
 
 initialState :: StdGen -> Assets -> GameState
 initialState gen assets = MenuState {assets = assets, rng = gen}
