@@ -7,6 +7,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import Model
 import Player
+import Data.Default
 import System.Random
 
 initialState :: StdGen -> Assets -> GameState
@@ -23,7 +24,7 @@ input e gstate = return (inputKey e gstate)
 -- TODO: use monads for this, as it makes it a lot easier to do with do ... return
 inputKey :: Event -> GameState -> GameState
 -- on enter pressed, switch to the playing state
-inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {rng = x, assets = assets} = PlayingState {rng = x, assets = assets, player = Player {playerPosition = (0, 0), playerState = Alive 5, playerVelocity = (0, 0)}}
+inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {rng = x, assets = assets} = PlayingState {rng = x, assets = assets, player = def}
 -- if we are in game over and enter is pressed, move to the game state again
 
 -- if we are in the playing state, check for arrow keys
