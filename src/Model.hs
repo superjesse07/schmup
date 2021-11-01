@@ -12,9 +12,6 @@ data InfoToShow
   | ShowANumber Int
   | ShowAChar Char
 
-nO_SECS_BETWEEN_CYCLES :: Float
-nO_SECS_BETWEEN_CYCLES = 5
-
 data GameState
   = MenuState { rng :: StdGen,
         assets      :: Assets

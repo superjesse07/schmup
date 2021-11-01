@@ -24,7 +24,7 @@ main = do
        -- next up, load the actual game
        playIO (InWindow "Counter" (1280, 720) (0, 0)) -- Or FullScreen
               black              -- Background color
-              30                 -- Frames per second
+              60                 -- Frames per second
               (initialState rng assets) -- Initial state
               view               -- View function
               input              -- Event function

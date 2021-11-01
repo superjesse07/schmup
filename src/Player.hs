@@ -7,6 +7,10 @@ import Graphics.Gloss.Interface.IO.Game
 import Data.Default
 import Arith
 
+-- player movement speed
+playerMoveSpeed :: Float
+playerMoveSpeed = 400.0
+
 data PlayerState = Alive Int | Dying Float | Dead
 
 data Player = Player
@@ -18,26 +22,29 @@ data Player = Player
 
 -- shows the player
 playerView :: Player -> Assets -> Picture
-playerView player assets = uncurry translate (playerPosition player) (playerSprite assets)
+playerView player assets = uncurry translate (playerPosition player) (scale 4 4 (playerSprite assets))
 
 -- steps the player
 playerStep :: Player -> Float -> Player 
-playerStep p dt = p { playerPosition = playerVelocity p `vectorAdd` playerPosition p }
+playerStep p dt = p { playerPosition = pp `vectorAdd` (pv `vectorMulFloat` (dt * playerMoveSpeed)) }
+  where 
+    pv = playerVelocity p 
+    pp = playerPosition p
 
 -- bit verbose but hey ho
 playerInput :: Player -> Event -> Player
 -- up
-playerInput p (EventKey (SpecialKey KeyUp) Up _ _) = playerAddVelocity p (0.0, -10.0)
-playerInput p (EventKey (SpecialKey KeyUp) Down _ _) = playerAddVelocity p (0.0, 10.0)
+playerInput p (EventKey (SpecialKey KeyUp) Up _ _) = playerAddVelocity p (0.0, -1.0)
+playerInput p (EventKey (SpecialKey KeyUp) Down _ _) = playerAddVelocity p (0.0, 1.0)
 -- down
-playerInput p (EventKey (SpecialKey KeyDown) Up _ _) = playerAddVelocity p (0.0, 10.0)
-playerInput p (EventKey (SpecialKey KeyDown) Down _ _) = playerAddVelocity p (0.0, -10.0)
+playerInput p (EventKey (SpecialKey KeyDown) Up _ _) = playerAddVelocity p (0.0, 1.0)
+playerInput p (EventKey (SpecialKey KeyDown) Down _ _) = playerAddVelocity p (0.0, -1.0)
 -- left
-playerInput p (EventKey (SpecialKey KeyLeft) Up _ _) = playerAddVelocity p (10.0, 0.0)
-playerInput p (EventKey (SpecialKey KeyLeft) Down _ _) = playerAddVelocity p (-10.0, 0.0)
+playerInput p (EventKey (SpecialKey KeyLeft) Up _ _) = playerAddVelocity p (1.0, 0.0)
+playerInput p (EventKey (SpecialKey KeyLeft) Down _ _) = playerAddVelocity p (-1.0, 0.0)
 -- right
-playerInput p (EventKey (SpecialKey KeyRight) Up _ _) = playerAddVelocity p (-10.0, 0.0)
-playerInput p (EventKey (SpecialKey KeyRight) Down _ _) = playerAddVelocity p (10.0, 0.0)
+playerInput p (EventKey (SpecialKey KeyRight) Up _ _) = playerAddVelocity p (-1.0, 0.0)
+playerInput p (EventKey (SpecialKey KeyRight) Down _ _) = playerAddVelocity p (1.0, 0.0)
 -- other
 playerInput p _ = p
 
