@@ -1,9 +1,11 @@
 -- | This module contains the data types
 --   which represent the state of the game
 module Model where
-
+import Graphics.Gloss
 import Graphics.Gloss.Data.Vector (Vector)
 import System.Random
+import Player
+import Assets
 
 data InfoToShow
   = ShowNothing
@@ -14,31 +16,33 @@ nO_SECS_BETWEEN_CYCLES :: Float
 nO_SECS_BETWEEN_CYCLES = 5
 
 data GameState
-  = MenuState { rng :: StdGen }
+  = MenuState { rng :: StdGen, 
+        assets :: Assets 
+      }
   | PlayingState
-      { elapsedTime :: Float,
+      { --elapsedTime :: Float,
         player :: Player,
-        turrets :: [Turret],
-        fighters :: [Fighter],
-        tanks :: [Tank],
-        cargoShips :: [CargoShip],
-        explosions :: [Explosion],
-        bullets :: [Bullet],
-        lasers :: [Laser],
-        playingScore :: Int,
-        paused :: Bool,
-        rng :: StdGen
+        --turrets :: [Turret],
+        --fighters :: [Fighter],
+        --tanks :: [Tank],
+        --cargoShips :: [CargoShip],
+        --explosions :: [Explosion],
+        --bullets :: [Bullet],
+        --lasers :: [Laser],
+        --playingScore :: Int,
+        --paused :: Bool,
+        rng :: StdGen,
+        assets :: Assets
       }
   | GameOverState
       { finalScore :: Int,
-        rng :: StdGen 
+        rng :: StdGen,
+        assets :: Assets
       }
 
 data Gun = LaserGun | DefaultGun | BurstGun
 
 data OwnerShip = PlayerOwner | EnemyOwner
-
-data PlayerState = Alive | Dying Float | Dead
 
 
 class Damagable a where
@@ -55,15 +59,6 @@ data Animation = Animation
 data Explosion = Explosion
   { explosionAnimation :: Animation,
     explosionsLeft :: Int
-  }
-
-data Player = Player
-  { playerPosition :: Vector,
-    playerHealth :: Int,
-    playerState :: PlayerState,
-    playerVelocity :: Vector,
-    playerGun :: Gun,
-    playerAnimation :: Animation
   }
 
 data Bullet = Bullet

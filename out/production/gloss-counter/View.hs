@@ -4,10 +4,12 @@ module View where
 
 import Graphics.Gloss
 import Model
+import Player
+import Assets
 
 view :: GameState -> IO Picture
-view gamestate = do picture <- loadBMP "assets/ship.bmp"
-                    return$scale 4 4 picture
+view = return . scale 4 4 . viewPure
 
 viewPure :: GameState -> Picture
-viewPure gamestate = color white (text "Hello world!")
+viewPure MenuState {} = color white (text "Hello world!")
+viewPure PlayingState {player = player,assets = assets} = playerView player assets

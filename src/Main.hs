@@ -3,6 +3,7 @@ import Graphics.Gloss
 import Controller
 import Model
 import View
+import Assets
 import System.Random
 
 -- if it doesn't work on linux: run mesa-demo first
@@ -21,7 +22,7 @@ main = do
        }
 
        -- next up, load the actual game
-       playIO (InWindow "Counter" (400, 400) (0, 0)) -- Or FullScreen
+       playIO (InWindow "Counter" (1280, 720) (0, 0)) -- Or FullScreen
               black              -- Background color
               30                 -- Frames per second
               (initialState rng assets) -- Initial state
