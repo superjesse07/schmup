@@ -3,7 +3,7 @@ module Player where
 import Assets
 import Gun
 import Graphics.Gloss
-
+import Debug.Trace
 import Graphics.Gloss.Interface.IO.Game
 import Data.Default
 import Arith
@@ -59,8 +59,15 @@ playerInput p (EventKey (SpecialKey KeyLeft) Down _ _) = playerAddVelocity p (-1
 -- right
 playerInput p (EventKey (SpecialKey KeyRight) Up _ _) = playerAddVelocity p (-1.0, 0.0)
 playerInput p (EventKey (SpecialKey KeyRight) Down _ _) = playerAddVelocity p (1.0, 0.0)
+-- fire the weapon
+playerInput p (EventKey (SpecialKey KeySpace ) Down _ _) = trace "pew" (fireGun p)
 -- other
 playerInput p _ = p
+
+-- implement the gun firing for the player
+instance GunUser  Player where
+  fireGun p@Player { playerWeapon = gun } = p {playerWeapon = setGunFire gun }
+  useGun  p@Player { playerWeapon = gun } = getGunProjectile gun
 
 -- helper function to move
 playerAddVelocity :: Player -> Vector -> Player
