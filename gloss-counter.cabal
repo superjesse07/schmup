@@ -20,6 +20,7 @@ executable gloss-counter
     Player
     Assets
     Arith
+    Gun
   hs-source-dirs:      src
   other-modules:       Controller
                      , Model
@@ -27,5 +28,6 @@ executable gloss-counter
                      , Player
                      , Assets
                      , Arith
+                     , Gun
 
   default-language:    Haskell2010

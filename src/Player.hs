@@ -1,6 +1,7 @@
 module Player where
 
 import Assets
+import Gun
 import Graphics.Gloss
 
 import Graphics.Gloss.Interface.IO.Game
@@ -11,25 +12,38 @@ import Arith
 playerMoveSpeed :: Float
 playerMoveSpeed = 160.0
 
+-- player dying time, how long it takes to die
+playerDyingTime :: Float 
+playerDyingTime = 0.5
+
 data PlayerState = Alive Int | Dying Float | Dead
 
 data Player = Player
     {
       playerPosition :: Vector,
       playerState    :: PlayerState,
-      playerVelocity :: Vector
+      playerVelocity :: Vector,
+      playerWeapon   :: Gun
     }
 
 -- shows the player
 playerView :: Player -> Assets -> Picture
-playerView player assets = uncurry translate (playerPosition player) (playerSprite assets)
+-- only show if we are alive
+playerView player@Player {playerState = Alive _} assets = uncurry translate (playerPosition player) (playerSprite assets)
+-- and not if we are dead
+playerView _ _ = Blank
 
 -- steps the player
 playerStep :: Player -> Float -> Player 
-playerStep p dt = p { playerPosition = pp `vectorAdd` (pv `vectorMulFloat` (dt * playerMoveSpeed)) }
+-- only move if we are alive
+playerStep p@Player { playerState = Alive _ } dt = p { playerPosition = pp `vectorAdd` (pv `vectorMulFloat` (dt * playerMoveSpeed)) }
   where 
     pv = playerVelocity p 
     pp = playerPosition p
+-- if we are dying, increase the time since death
+playerStep p@Player { playerState = Dying t } dt = p { playerState = Dying (t + dt)}
+-- if we are dead, do nothing
+playerStep p _ = p
 
 -- bit verbose but hey ho
 playerInput :: Player -> Event -> Player
@@ -53,4 +67,4 @@ playerAddVelocity :: Player -> Vector -> Player
 playerAddVelocity p v = p { playerVelocity = v `vectorAdd` playerVelocity p }
 
 instance Default Player where
-  def = Player (0,0) (Alive 5) (0,0)
+  def = Player (0,0) (Alive 5) (0,0) (DefaultGun 1.0)

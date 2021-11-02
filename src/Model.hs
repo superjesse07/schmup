@@ -27,7 +27,7 @@ data GameState
         --bullets :: [Bullet],
         --lasers :: [Laser],
         --playingScore :: Int,
-        --paused :: Bool,
+        paused :: Bool,
         rng    :: StdGen,
         assets :: Assets
       }
@@ -37,13 +37,11 @@ data GameState
         assets     :: Assets
       }
 
-data Gun = LaserGun | DefaultGun | BurstGun
-
 data OwnerShip = PlayerOwner | EnemyOwner
 
 
 class Damagable a where
-  damage :: a -> a
+  damage :: a -> Int -> a
 
 class Moveable a where
   move :: a -> a

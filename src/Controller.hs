@@ -15,7 +15,8 @@ initialState gen assets = MenuState {assets = assets, rng = gen}
 
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
-step secs gstate@PlayingState { player = p } = do return gstate { player = playerStep p secs }
+step secs gstate@PlayingState { player = p, paused = paused } | paused = return gstate
+                                                              | otherwise = do return gstate { player = playerStep p secs }
 step secs gstate = do return gstate
 
 -- | Handle user input
@@ -25,7 +26,10 @@ input e gstate = return (inputKey e gstate)
 -- TODO: use monads for this, as it makes it a lot easier to do with do ... return
 inputKey :: Event -> GameState -> GameState
 -- on enter pressed, switch to the playing state
-inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {rng = x, assets = assets} = PlayingState {rng = x, assets = assets, player = def}
+inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {rng = x, assets = assets} = PlayingState {rng = x, assets = assets, player = def, paused = False }
+-- check for pausing
+inputKey (EventKey (SpecialKey KeyEsc) Down _ _) gs@PlayingState { paused = p } = gs { paused = not p }
+-- in the playing state, send inputs to the player
 inputKey ip gs@PlayingState {} = gs { player = playerInput (player gs) ip }
 -- if we are in game over and enter is pressed, move to the game state again
 
