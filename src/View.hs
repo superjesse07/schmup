@@ -8,7 +8,7 @@ import           Model
 import           Player
 
 view :: GameState -> IO Picture
-view = return . viewPure
+view = return . scale 4 4 . viewPure
 
 viewPure :: GameState -> Picture
 viewPure MenuState {} = color white (text "Hello world!")

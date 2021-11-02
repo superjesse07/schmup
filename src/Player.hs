@@ -9,7 +9,7 @@ import Arith
 
 -- player movement speed
 playerMoveSpeed :: Float
-playerMoveSpeed = 400.0
+playerMoveSpeed = 160.0
 
 data PlayerState = Alive Int | Dying Float | Dead
 
@@ -22,7 +22,7 @@ data Player = Player
 
 -- shows the player
 playerView :: Player -> Assets -> Picture
-playerView player assets = uncurry translate (playerPosition player) (scale 4 4 (playerSprite assets))
+playerView player assets = uncurry translate (playerPosition player) (playerSprite assets)
 
 -- steps the player
 playerStep :: Player -> Float -> Player 
