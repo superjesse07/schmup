@@ -36,10 +36,11 @@ playerView _ _ = Blank
 -- steps the player
 playerStep :: Player -> Float -> Player 
 -- only move if we are alive
-playerStep p@Player { playerState = Alive _ } dt = p { playerPosition = pp `vectorAdd` (pv `vectorMulFloat` (dt * playerMoveSpeed)) }
+playerStep p@Player { playerState = Alive _ } dt = p { playerPosition = pp `vectorAdd` (pv `vectorMulFloat` (dt * playerMoveSpeed)), playerWeapon = gun }
   where 
     pv = playerVelocity p 
     pp = playerPosition p
+    gun = stepGun (playerWeapon p) dt
 -- if we are dying, increase the time since death
 playerStep p@Player { playerState = Dying t } dt = p { playerState = Dying (t + dt)}
 -- if we are dead, do nothing
