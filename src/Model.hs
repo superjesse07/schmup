@@ -33,6 +33,7 @@ data GameState
       }
   | GameOverState
       { finalScore :: Int,
+        highScores :: [Int],
         rng        :: StdGen,
         assets     :: Assets
       }

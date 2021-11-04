@@ -22,4 +22,5 @@ out/
 cabal.project.local
 cabal.project.local~
 .HTF/
+*smp
 .ghc.environment.*
