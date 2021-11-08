@@ -6,6 +6,8 @@ import           Assets
 import           Graphics.Gloss
 import           Model
 import           Player
+import Gun
+import Debug.Trace
 
 
 view :: GameState -> IO Picture
@@ -22,7 +24,9 @@ viewPure GameOverState {finalScore=score,highScores=hi} = Pictures ([messageImg,
     imageScores = map (scale 0.1 0.1 . color white . text . show) hi
     scoreImage = zipWith (\idx img -> translate 0.0 ((-idx) * 15.0 - 30.0) img) [0..10] imageScores
 -- show all entities, and the state if paused
-viewPure PlayingState {player = player,assets = assets, paused = paused} = Pictures [playerView player assets, showPaused]
+viewPure PlayingState {player = player,assets = assets, bullets = bullets, paused = paused} = Pictures (playerPicture:pausedPicture:projectilePictures)
   where
-    showPaused | paused    = color white (text "Paused")
-               | otherwise = Blank
+    playerPicture = playerView player assets
+    projectilePictures = map (`viewProjectile` assets) bullets
+    pausedPicture | paused    = color white (text "Paused")
+                  | otherwise = Blank

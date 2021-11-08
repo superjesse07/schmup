@@ -5,6 +5,7 @@ import           Assets
 import           Graphics.Gloss
 import           Graphics.Gloss.Data.Vector (Vector)
 import           Player
+import           Gun
 import           System.Random
 
 data InfoToShow
@@ -24,7 +25,7 @@ data GameState
         --tanks :: [Tank],
         --cargoShips :: [CargoShip],
         --explosions :: [Explosion],
-        --bullets :: [Bullet],
+        bullets :: [Projectile],
         --lasers :: [Laser],
         --playingScore :: Int,
         paused :: Bool,

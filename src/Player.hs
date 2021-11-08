@@ -35,12 +35,11 @@ playerView _ _ = Blank
 
 -- steps the player
 playerStep :: Player -> Float -> Player 
--- only move if we are alive
-playerStep p@Player { playerState = Alive _ } dt = p { playerPosition = pp `vectorAdd` (pv `vectorMulFloat` (dt * playerMoveSpeed)), playerWeapon = gun }
+-- only move if we are alive TODO put this under movable
+playerStep p@Player { playerState = Alive _ } dt = p { playerPosition = pp `vectorAdd` (pv `vectorMulFloat` (dt * playerMoveSpeed)) }
   where 
     pv = playerVelocity p 
     pp = playerPosition p
-    gun = stepGun (playerWeapon p) dt
 -- if we are dying, increase the time since death
 playerStep p@Player { playerState = Dying t } dt = p { playerState = Dying (t + dt)}
 -- if we are dead, do nothing
@@ -66,9 +65,11 @@ playerInput p (EventKey (SpecialKey KeySpace ) Down _ _) = trace "pew" (fireGun 
 playerInput p _ = p
 
 -- implement the gun firing for the player
-instance GunUser  Player where
-  fireGun p@Player { playerWeapon = gun } = p {playerWeapon = setGunFire gun }
-  useGun  p@Player { playerWeapon = gun } = getGunProjectile gun
+instance GunUser Player where
+  fireGun     p@Player { playerWeapon = gun }    = p { playerWeapon = setGunFire gun }
+  getGun      p@Player { playerWeapon = gun }    = gun 
+  stepGunUser p@Player { playerWeapon = gun } dt = (p { playerWeapon = newGun }, newProjectile )
+    where (newGun, newProjectile) = stepGun (playerPosition p) gun dt
 
 -- helper function to move
 playerAddVelocity :: Player -> Vector -> Player

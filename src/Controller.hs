@@ -7,11 +7,13 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import Model
 import Player
+import Gun
 import Data.Default
 import System.Random
 import System.IO
 import Debug.Trace
 import Data.List
+import Data.Maybe
 
 initialState :: StdGen -> Assets -> GameState
 initialState gen assets = MenuState {assets = assets, rng = gen}
@@ -19,7 +21,7 @@ initialState gen assets = MenuState {assets = assets, rng = gen}
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
 step secs gstate@PlayingState { player = p, paused = paused } | paused = return gstate
-                                                              | otherwise = do return gstate { player = playerStep p secs }
+                                                              | otherwise = return (stepps secs gstate)
 -- if the high scores are empty, save the score and load the high scores from the file system
 step secs gs@GameOverState {finalScore=score, highScores=[]} = do 
                                                                  -- add the score to the file
@@ -35,6 +37,17 @@ step secs gs@GameOverState {finalScore=score, highScores=[]} = do
 -- otherwise
 step secs gstate = return gstate
 
+-- step the playing state
+stepps :: Float -> GameState  -> GameState 
+stepps dt gs@PlayingState { player = p, bullets = b } = gs { player = steppedPlayer, bullets = steppedProjectiles }
+  where 
+    -- step the player
+    steppedPlayer = playerStep newPlayer dt
+    -- and their projectiles
+    (newPlayer, playerProjectile) = stepGunUser p dt
+    -- step the projectiles, and add new if needed
+    steppedProjectiles = map (stepProjectile dt) (b ++ catMaybes [playerProjectile])
+
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
 input e gstate = return (inputKey e gstate)
@@ -42,7 +55,7 @@ input e gstate = return (inputKey e gstate)
 -- TODO: use monads for this, as it makes it a lot easier to do with do ... return
 inputKey :: Event -> GameState -> GameState
 -- on enter pressed, switch to the playing state
-inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {rng = x, assets = assets} = PlayingState {rng = x, assets = assets, player = def, paused = False }
+inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {rng = x, assets = assets} = PlayingState {rng = x, assets = assets, player = def, paused = False, bullets = [] }
 -- do the same if we are in the game over screen
 -- TODO
 -- check for pausing
