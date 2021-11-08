@@ -54,7 +54,7 @@ data Projectile = LaserProjectile | DefaultProjectle Vector | BurstProjectile
 -- step for them
 stepProjectile :: Float -> Projectile -> Projectile
 stepProjectile dt LaserProjectile       = LaserProjectile
-stepProjectile dt (DefaultProjectle v)  = DefaultProjectle ((traceShowId v) `vectorAdd` (dt * 100.0, 0.0))
+stepProjectile dt (DefaultProjectle v)  = DefaultProjectle (v `vectorAdd` (dt * 100.0, 0.0))
 stepProjectile dt BurstProjectile       = BurstProjectile
 
 -- view for them
