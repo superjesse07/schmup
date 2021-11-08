@@ -11,9 +11,12 @@ data Gun = LaserGun Float | DefaultGun Float | BurstGun Float
 
 -- set the gun to fire
 setGunFire :: Gun -> Gun 
-setGunFire (LaserGun _)   = LaserGun 0.0
-setGunFire (DefaultGun _) = DefaultGun 0.0
-setGunFire (BurstGun _)   = BurstGun 0.0
+setGunFire (LaserGun t)   | t > 0.5   = LaserGun 0.0
+                          | otherwise = LaserGun t 
+setGunFire (DefaultGun t) | t > 0.2   = DefaultGun 0.0
+                          | otherwise = DefaultGun t
+setGunFire (BurstGun t)   | t > 0.4   = BurstGun 0.0
+                          | otherwise = BurstGun t
 
 -- get the projectile
 -- step will automatically make it not fire
