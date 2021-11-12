@@ -95,3 +95,5 @@ data CargoShip = CargoShip
     cargoShipVelocity  :: Vector,
     cargoShipAnimation :: Animation
   }
+  
+  

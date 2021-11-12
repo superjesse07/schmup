@@ -16,6 +16,8 @@ main = do
        -- load the sprites
        playerSprite <- loadBMP "assets/ship.bmp" -- sprites
 
+       let sprites = Assets playerSprite
+
        -- make the assets
        let assets = Assets {
               playerSprite = playerSprite
