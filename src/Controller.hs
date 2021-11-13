@@ -46,7 +46,7 @@ stepps dt gs@PlayingState { player = p, bullets = b } = gs { player = steppedPla
     -- and their projectiles
     (newPlayer, playerProjectile) = stepGunUser p dt
     -- step the projectiles, and add new if needed
-    steppedProjectiles = map (stepProjectile dt) (b ++ catMaybes [playerProjectile])
+    steppedProjectiles = mapMaybe (stepProjectile dt) (b ++ catMaybes [playerProjectile])
 
 -- | Handle user input
 input :: Event -> GameState -> IO GameState

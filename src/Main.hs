@@ -16,15 +16,13 @@ main = do
        -- load the sprites
        playerSprite <- loadBMP "assets/ship.bmp" -- sprites
 
-       let sprites = Assets playerSprite
-
        -- make the assets
        let assets = Assets {
               playerSprite = playerSprite
        }
 
        -- next up, load the actual game
-       playIO (InWindow "Counter" (1280, 720) (0, 0)) -- Or FullScreen
+       playIO (InWindow "Schmup" (1280, 720) (0, 0)) -- Or FullScreen
               black              -- Background color
               60                 -- Frames per second
               (initialState rng assets) -- Initial state

@@ -60,7 +60,7 @@ playerInput p (EventKey (SpecialKey KeyLeft) Down _ _) = playerAddVelocity p (-1
 playerInput p (EventKey (SpecialKey KeyRight) Up _ _) = playerAddVelocity p (-1.0, 0.0)
 playerInput p (EventKey (SpecialKey KeyRight) Down _ _) = playerAddVelocity p (1.0, 0.0)
 -- fire the weapon
-playerInput p (EventKey (SpecialKey KeySpace ) Down _ _) = trace "pew" (fireGun p)
+playerInput p (EventKey (SpecialKey KeySpace ) Down _ _) = fireGun p
 -- other
 playerInput p _ = p
 
@@ -76,4 +76,4 @@ playerAddVelocity :: Player -> Vector -> Player
 playerAddVelocity p v = p { playerVelocity = v `vectorAdd` playerVelocity p }
 
 instance Default Player where
-  def = Player (0,0) (Alive 5) (0,0) (DefaultGun 1.0)
+  def = Player (0,0) (Alive 5) (0,0) (getDefaultGun LaserType)
