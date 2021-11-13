@@ -3,44 +3,45 @@
 module Controller where
 
 import Assets
-import Graphics.Gloss
-import Graphics.Gloss.Interface.IO.Game
-import Model
-import Player
-import Gun
 import Data.Default
-import System.Random
-import System.IO
-import Debug.Trace
 import Data.List
 import Data.Maybe
+import Debug.Trace
+import Graphics.Gloss
+import Graphics.Gloss.Interface.IO.Game
+import Gun
+import Model
+import Player
+import System.IO
+import System.Random
 
 initialState :: StdGen -> Assets -> GameState
 initialState gen assets = MenuState {assets = assets, rng = gen}
 
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
-step secs gstate@PlayingState { player = p, paused = paused } | paused = return gstate
-                                                              | otherwise = return (stepps secs gstate)
+step secs gstate@PlayingState {player = p, paused = paused}
+  | paused = return gstate
+  | otherwise = return (stepps secs gstate)
 -- if the high scores are empty, save the score and load the high scores from the file system
-step secs gs@GameOverState {finalScore=score, highScores=[]} = do 
-                                                                 -- add the score to the file
-                                                                 appendFile "scores.smp" ("\n" ++ show score)
-                                                                 -- read the file
-                                                                 content <- readFile' "scores.smp"
-                                                                 -- parse it
-                                                                 let scores = map (\x -> read x :: Int) (lines content)
-                                                                 -- sort it
-                                                                 let sortedScores = (reverse . sort) scores
-                                                                 -- put it in the state and return it
-                                                                 return gs{highScores=sortedScores}
+step secs gs@GameOverState {finalScore = score, highScores = []} = do
+  -- add the score to the file
+  appendFile "scores.smp" ("\n" ++ show score)
+  -- read the file
+  content <- readFile' "scores.smp"
+  -- parse it
+  let scores = map (\x -> read x :: Int) (lines content)
+  -- sort it
+  let sortedScores = (reverse . sort) scores
+  -- put it in the state and return it
+  return gs {highScores = sortedScores}
 -- otherwise
 step secs gstate = return gstate
 
 -- step the playing state
-stepps :: Float -> GameState  -> GameState 
-stepps dt gs@PlayingState { player = p, bullets = b } = gs { player = steppedPlayer, bullets = steppedProjectiles }
-  where 
+stepps :: Float -> GameState -> GameState
+stepps dt gs@PlayingState {player = p, bullets = b} = gs {player = steppedPlayer, bullets = steppedProjectiles}
+  where
     -- step the player
     steppedPlayer = playerStep newPlayer dt
     -- and their projectiles
@@ -55,15 +56,15 @@ input e gstate = return (inputKey e gstate)
 -- TODO: use monads for this, as it makes it a lot easier to do with do ... return
 inputKey :: Event -> GameState -> GameState
 -- on enter pressed, switch to the playing state
-inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {rng = x, assets = assets} = PlayingState {rng = x, assets = assets, player = def, paused = False, bullets = [] }
+inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {rng = x, assets = assets} = PlayingState {rng = x, assets = assets, player = def, paused = False, bullets = []}
 -- do the same if we are in the game over screen
 -- TODO
 -- check for pausing
-inputKey (EventKey (SpecialKey KeyEsc) Down _ _) gs@PlayingState { paused = p } = gs { paused = not p }
+inputKey (EventKey (SpecialKey KeyEsc) Down _ _) gs@PlayingState {paused = p} = gs {paused = not p}
 -- end the game, for testing
-inputKey (EventKey (SpecialKey KeyEnd) Down _ _) gs@PlayingState {rng=rng, assets=assets} = GameOverState 1 [] rng assets
+inputKey (EventKey (SpecialKey KeyEnd) Down _ _) gs@PlayingState {rng = rng, assets = assets} = GameOverState 1 [] rng assets
 -- in the playing state, send inputs to the player
-inputKey ip gs@PlayingState {} = gs { player = playerInput (player gs) ip }
+inputKey ip gs@PlayingState {} = gs {player = playerInput (player gs) ip}
 -- if we are in game over and enter is pressed, move to the game state again
 
 -- if we are in the playing state, check for arrow keys

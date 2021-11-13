@@ -1,30 +1,29 @@
 module Player where
 
-import Assets
-import Gun
-import Graphics.Gloss
-import Debug.Trace
-import Graphics.Gloss.Interface.IO.Game
-import Data.Default
 import Arith
+import Assets
+import Data.Default
+import Debug.Trace
+import Graphics.Gloss
+import Graphics.Gloss.Interface.IO.Game
+import Gun
 
 -- player movement speed
 playerMoveSpeed :: Float
 playerMoveSpeed = 160.0
 
 -- player dying time, how long it takes to die
-playerDyingTime :: Float 
+playerDyingTime :: Float
 playerDyingTime = 0.5
 
 data PlayerState = Alive Int | Dying Float | Dead
 
 data Player = Player
-    {
-      playerPosition :: Vector,
-      playerState    :: PlayerState,
-      playerVelocity :: Vector,
-      playerWeapon   :: Gun
-    }
+  { playerPosition :: Vector,
+    playerState :: PlayerState,
+    playerVelocity :: Vector,
+    playerWeapon :: Gun
+  }
 
 -- shows the player
 playerView :: Player -> Assets -> Picture
@@ -34,14 +33,14 @@ playerView player@Player {playerState = Alive _} assets = uncurry translate (pla
 playerView _ _ = Blank
 
 -- steps the player
-playerStep :: Player -> Float -> Player 
+playerStep :: Player -> Float -> Player
 -- only move if we are alive TODO put this under movable
-playerStep p@Player { playerState = Alive _ } dt = p { playerPosition = pp `vectorAdd` (pv `vectorMulFloat` (dt * playerMoveSpeed)) }
-  where 
-    pv = playerVelocity p 
+playerStep p@Player {playerState = Alive _} dt = p {playerPosition = pp `vectorAdd` (pv `vectorMulFloat` (dt * playerMoveSpeed))}
+  where
+    pv = playerVelocity p
     pp = playerPosition p
 -- if we are dying, increase the time since death
-playerStep p@Player { playerState = Dying t } dt = p { playerState = Dying (t + dt)}
+playerStep p@Player {playerState = Dying t} dt = p {playerState = Dying (t + dt)}
 -- if we are dead, do nothing
 playerStep p _ = p
 
@@ -60,20 +59,21 @@ playerInput p (EventKey (SpecialKey KeyLeft) Down _ _) = playerAddVelocity p (-1
 playerInput p (EventKey (SpecialKey KeyRight) Up _ _) = playerAddVelocity p (-1.0, 0.0)
 playerInput p (EventKey (SpecialKey KeyRight) Down _ _) = playerAddVelocity p (1.0, 0.0)
 -- fire the weapon
-playerInput p (EventKey (SpecialKey KeySpace ) Down _ _) = fireGun p
+playerInput p (EventKey (SpecialKey KeySpace) Down _ _) = fireGun p
 -- other
 playerInput p _ = p
 
 -- implement the gun firing for the player
 instance GunUser Player where
-  fireGun     p@Player { playerWeapon = gun }    = p { playerWeapon = setGunFire gun }
-  getGun      p@Player { playerWeapon = gun }    = gun 
-  stepGunUser p@Player { playerWeapon = gun } dt = (p { playerWeapon = newGun }, newProjectile )
-    where (newGun, newProjectile) = stepGun (playerPosition p) gun dt
+  fireGun p@Player {playerWeapon = gun} = p {playerWeapon = setGunFire gun}
+  getGun p@Player {playerWeapon = gun} = gun
+  stepGunUser p@Player {playerWeapon = gun} dt = (p {playerWeapon = newGun}, newProjectile)
+    where
+      (newGun, newProjectile) = stepGun (playerPosition p) gun dt
 
 -- helper function to move
 playerAddVelocity :: Player -> Vector -> Player
-playerAddVelocity p v = p { playerVelocity = v `vectorAdd` playerVelocity p }
+playerAddVelocity p v = p {playerVelocity = v `vectorAdd` playerVelocity p}
 
 instance Default Player where
-  def = Player (0,0) (Alive 5) (0,0) (getDefaultGun LaserType)
+  def = Player (0, 0) (Alive 5) (0, 0) (getDefaultGun LaserType)
