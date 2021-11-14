@@ -58,11 +58,13 @@ stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions
     -- step the player
     let steppedPlayer = playerStep newPlayer dt 
     -- step the projectiles
-    let steppedProjectiles = mapMaybe (stepProjectile dt) (b ++ catMaybes [playerProjectile] ++ catMaybes turretProjectiles)
+    let steppedProjectiles = mapMaybe (stepProjectile dt) (b ++ catMaybes [playerProjectile] ++ catMaybes turretProjectiles ++ catMaybes fighterProjectiles)
     -- step the turrets
     let steppedTurrets = mapMaybe (stepTurret dt (playerPosition newPlayer)) allTurrets
-    -- fighters
-    let steppedFighters = mapMaybe (stepFighter dt (playerPosition newPlayer)) allFighters
+    -- things to avoid
+    let avoidList = map projectilePosition steppedProjectiles ++ [playerPosition newPlayer]
+    -- fightersm also keep distance from all projectiles + player
+    let steppedFighters = mapMaybe (stepFighter dt avoidList (playerPosition newPlayer)) allFighters
   
     steppedBackground <- backgroundStep screenSize dt background
     mappedExplosions <- mapM (stepExplosion dt) explosions

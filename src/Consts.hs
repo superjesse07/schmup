@@ -5,6 +5,14 @@ module Consts where
 scrollingSpeed :: Float
 scrollingSpeed = 50.0
 
+-- fighter speed
+fighterSpeed :: Float
+fighterSpeed = 100.0
+
+-- player speed
+playerSpeed :: Float
+playerSpeed = 160.0
+
 -- number of turrets
 numTurrets :: Int 
 numTurrets = 3

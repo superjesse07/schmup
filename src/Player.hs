@@ -8,6 +8,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Data.Point.Arithmetic as Vector
 import Graphics.Gloss.Interface.IO.Game
 import Gun
+import Consts 
 
 -- player movement speed
 playerMoveSpeed :: Float
@@ -36,7 +37,7 @@ playerView _ _ = Blank
 -- steps the player
 playerStep :: Player -> Float -> Player
 -- only move if we are alive TODO put this under movable
-playerStep p@Player {playerState = Alive _} dt = p {playerPosition = pp Vector.+ ((dt Prelude.* playerMoveSpeed) Vector.* pv)}
+playerStep p@Player {playerState = Alive _} dt = p {playerPosition = pp Vector.+ ((dt Prelude.* playerSpeed) Vector.* pv)}
   where
     pv = playerVelocity p
     pp = playerPosition p
