@@ -5,10 +5,11 @@ import Assets
 import Data.Default
 import Debug.Trace
 import Graphics.Gloss
-import Graphics.Gloss.Data.Point.Arithmetic as Vector
+import qualified Graphics.Gloss.Data.Point.Arithmetic as Vector
 import Graphics.Gloss.Interface.IO.Game
 import Gun
 import Consts 
+import Model
 
 -- player movement speed
 playerMoveSpeed :: Float
@@ -18,26 +19,27 @@ playerMoveSpeed = 160.0
 playerDyingTime :: Float
 playerDyingTime = 0.5
 
-data PlayerState = Alive Int | Dying Float | Dead
-
 data Player = Player
   { playerPosition :: Vector,
-    playerState :: PlayerState,
+    playerState :: LivingState,
     playerVelocity :: Vector,
-    playerWeapon :: Gun
+    playerWeapon :: Gun,
+    playerHitTimer :: Float
   }
 
 -- shows the player
 playerView :: Player -> Assets -> Picture
 -- only show if we are alive
-playerView player@Player {playerState = Alive _} assets = uncurry translate (playerPosition player) (playerSprite assets)
+playerView player@Player {playerState = Living _, playerHitTimer = timer} assets
+  | timer < 0 = uncurry translate (playerPosition player) (playerSprite assets)
+  | otherwise = Blank
 -- and not if we are dead
 playerView _ _ = Blank
 
 -- steps the player
 playerStep :: Player -> Float -> Player
 -- only move if we are alive TODO put this under movable
-playerStep p@Player {playerState = Alive _} dt = p {playerPosition = pp Vector.+ ((dt Prelude.* playerSpeed) Vector.* pv)}
+playerStep p@Player {playerState = Living _} dt = p {playerPosition = pp Vector.+ ((dt Prelude.* playerMoveSpeed) Vector.* pv), playerHitTimer = playerHitTimer p - dt}
   where
     pv = playerVelocity p
     pp = playerPosition p
@@ -78,4 +80,4 @@ playerAddVelocity :: Player -> Vector -> Player
 playerAddVelocity p v = p {playerVelocity = v Vector.+ playerVelocity p}
 
 instance Default Player where
-  def = Player (0, 0) (Alive 5) (0, 0) (getDefaultGun DefaultType)
+  def = Player (0, 0) (Living 5) (0, 0) (getDefaultGun DefaultType) 0
