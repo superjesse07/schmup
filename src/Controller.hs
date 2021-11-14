@@ -14,7 +14,8 @@ import Model
 import Player
 import System.IO
 import System.Random
-import State
+import GameState
+import Turret
 
 initialState :: Assets -> GameState
 initialState assets = MenuState {assets = assets}
@@ -53,20 +54,6 @@ stepps dt gs@PlayingState {player = p, bullets = b, turrets = t} = do
     -- return the modified gamestate
     return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = newTurrets ++ t}
 
-genNewTurrets :: Int -> IO [Turret]
-genNewTurrets n | n <= 0 = return []
-                | otherwise =  do
-  -- get the random positions
-  x <- randomIO :: IO Float
-  y <- randomIO :: IO Float
-  -- make other turrets
-  rest <- genNewTurrets (n - 1)
-  -- make the turret
-  let turret = Turret (x * 100.0, y * 100.0) 3
-  -- and make all turrets
-  return (turret:rest)
-
-
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
 input e gstate = return (inputKey e gstate)
@@ -74,13 +61,13 @@ input e gstate = return (inputKey e gstate)
 -- TODO: use monads for this, as it makes it a lot easier to do with do ... return
 inputKey :: Event -> GameState -> GameState
 -- on enter pressed, switch to the playing state
-inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {assets = assets} = PlayingState {assets = assets, player = def, paused = False, bullets = [], turrets = []}
+inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {assets = assets} = PlayingState {assets = assets, player = def, paused = False, bullets = [], turrets = [], playingScore = 0}
 -- do the same if we are in the game over screen
 -- TODO
 -- check for pausing
 inputKey (EventKey (SpecialKey KeyEsc) Down _ _) gs@PlayingState {paused = p} = gs {paused = not p}
 -- end the game, for testing
-inputKey (EventKey (SpecialKey KeyEnd) Down _ _) gs@PlayingState {assets = assets} = GameOverState 1 [] assets
+inputKey (EventKey (SpecialKey KeyEnd) Down _ _) gs@PlayingState {assets = assets, playingScore = score} = GameOverState score [] assets
 -- in the playing state, send inputs to the player
 inputKey ip gs@PlayingState {} = gs {player = playerInput (player gs) ip}
 -- if we are in game over and enter is pressed, move to the game state again

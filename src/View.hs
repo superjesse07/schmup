@@ -8,7 +8,8 @@ import Graphics.Gloss
 import Gun
 import Model
 import Player
-import State
+import GameState
+import Turret
 
 view :: GameState -> IO Picture
 view = return . scale 4 4 . viewPure
@@ -25,9 +26,9 @@ viewPure GameOverState {finalScore = score, highScores = hi} = Pictures ([messag
     scoreImage = zipWith (\idx img -> translate 0.0 ((- idx) * 15.0 - 30.0) img) [0 .. 10] imageScores
 
 -- show all entities, and the state if paused
-viewPure PlayingState {player = player, assets = assets, bullets = bullets, turrets = turrets, paused = paused} = Pictures (playerPicture : pausedPicture : turretPicture : projectilePictures)
+viewPure PlayingState {player = player, assets = assets, bullets = bullets, turrets = turrets, paused = paused} = Pictures (playerPicture : pausedPicture  : (projectilePictures ++ turretPictures))
   where
-    turretPicture = Pictures (map (\(Turret v _) -> uncurry translate v (color white (circle 5.0))) turrets)
+    turretPictures = map (`turretView` assets) turrets
     playerPicture = playerView player assets
     projectilePictures = map (`viewProjectile` assets) bullets
     pausedPicture

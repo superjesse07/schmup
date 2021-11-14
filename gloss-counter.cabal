@@ -21,7 +21,8 @@ executable gloss-counter
     Assets
     Arith
     Gun
-    State
+    GameState
+    Turret
   hs-source-dirs:      src
   other-modules:       Controller
                      , Model
@@ -30,6 +31,7 @@ executable gloss-counter
                      , Assets
                      , Arith
                      , Gun
-                     , State
+                     , GameState
+                     , Turret
 
   default-language:    Haskell2010

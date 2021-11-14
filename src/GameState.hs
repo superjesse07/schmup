@@ -1,10 +1,9 @@
-module State where
+module GameState where
 
 import Player
 import Gun
 import Assets
-import System.Random
-import Model
+import Turret
 
 data GameState
   = MenuState
@@ -19,8 +18,7 @@ data GameState
         --cargoShips :: [CargoShip],
         --explosions :: [Explosion],
         bullets :: [Projectile],
-        --lasers :: [Laser],
-        --playingScore :: Int,
+        playingScore :: Int,
         paused :: Bool,
         assets :: Assets
       }

@@ -5,6 +5,9 @@ import Assets
 import Debug.Trace
 import Graphics.Gloss
 
+-- ownership, wether the enemy or player owns it
+data OwnerShip = PlayerOwner | EnemyOwner
+
 -- TODO: include whether the weapon is fired (time since firing) and a cooldown
 -- then adda  method to fire the weapon and return a maybe projectile
 data Gun = LaserGun Float | DefaultGun Float | BurstGun Float Int

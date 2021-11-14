@@ -14,8 +14,6 @@ data InfoToShow
   | ShowANumber Int
   | ShowAChar Char
 
-data OwnerShip = PlayerOwner | EnemyOwner
-
 class Damagable a where
   damage :: a -> Int -> a
 
@@ -42,11 +40,6 @@ data Laser = Laser
   { laserPosition :: Vector,
     laserOwner :: OwnerShip,
     laserAnimation :: Animation
-  }
-
-data Turret = Turret
-  { turretPosition :: Vector,
-    turretHealth :: Int
   }
 
 data Fighter = Fighter
