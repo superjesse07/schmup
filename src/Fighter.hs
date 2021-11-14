@@ -33,7 +33,7 @@ genNewFighters n
     -- make other fighter
     rest <- genNewFighters (n - 1)
     -- make the fighter
-    let fighter = Fighter (x * 500.0 + 600.0, y * 150.0 - 75.0) (Living 3) (getDefaultGun DefaultType) (courage * 70.0 + 50.0) (10000.0, 0.0) 0.0 0.0
+    let fighter = Fighter (x * 500.0 + 600.0, y * 150.0 - 75.0) (Living 1) (getDefaultGun DefaultType) (courage * 70.0 + 50.0) (10000.0, 0.0) 0.0 0.0
     -- and make all fighters
     return (fighter : rest)
 
@@ -72,7 +72,7 @@ instance GunUser Fighter where
 -- view a fighter
 fighterView :: Fighter -> Assets -> Picture
 fighterView (Fighter v _ _ _ _ hit _) assets
-  | hit < 0 = uncurry translate v (color white (circle 3.0))
+  | hit < 0 = uncurry translate v (color white (fighterSprite assets))
   | otherwise = Blank
 
 instance LivingObject Fighter where

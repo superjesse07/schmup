@@ -50,6 +50,7 @@ playerStep p@Player {playerState = Dying t} dt
 -- if we are dead, do nothing
 playerStep p _ = p
 
+
 -- bit verbose but hey ho
 playerInput :: Player -> Event -> Player
 -- up
@@ -65,7 +66,7 @@ playerInput p (EventKey (SpecialKey KeyLeft) Down _ _) = playerAddVelocity p (-1
 playerInput p (EventKey (SpecialKey KeyRight) Up _ _) = playerAddVelocity p (-1.0, 0.0)
 playerInput p (EventKey (SpecialKey KeyRight) Down _ _) = playerAddVelocity p (1.0, 0.0)
 -- fire the weapon
-playerInput p (EventKey (SpecialKey KeySpace) Down _ _) = fireGun p
+playerInput p@Player {playerState = Living _} (EventKey (SpecialKey KeySpace) Down _ _) = fireGun p
 -- other
 playerInput p _ = p
 

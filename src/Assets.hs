@@ -8,5 +8,7 @@ data Assets = Assets
     cargoShipSprite :: Picture,
     bulletSprite :: Picture,
     explosionSprites :: [Picture],
-    starSprite :: Picture
+    starSprite :: Picture,
+    fighterSprite :: Picture,
+    turretSprite :: Picture
   }

@@ -58,8 +58,8 @@ instance GunUser Turret where
 
 -- view a turret
 turretView :: Turret -> Assets -> Picture
-turretView (Turret v h _ _ _ hit) assets
- | hit < 0 = uncurry translate v (color white (circle 5.0))
+turretView (Turret v _ _ _ _ hit) assets
+ | hit < 0 = uncurry translate v (color white (turretSprite assets))
  | otherwise = Blank
 
 instance LivingObject Turret where

@@ -10,7 +10,7 @@ import Graphics.Gloss.Interface.Environment (getScreenSize)
 import System.Random.Stateful (randomIO)
 import Debug.Trace (traceIO)
 
-data BackgroundObject = Star Vector Float | Asteroid Vector Float
+data BackgroundObject = Star Vector Float
 
 backgroundStep :: (Int, Int) -> Float -> [BackgroundObject] -> IO [BackgroundObject]
 backgroundStep screenSize dt background = do
@@ -20,9 +20,6 @@ backgroundStep screenSize dt background = do
 backgroundObjectStep :: (Int, Int) -> Float -> BackgroundObject -> Maybe BackgroundObject
 backgroundObjectStep screenSize dt (Star pos speed)
   | fst pos > (- int2Float (fst screenSize)) = Just (Star (pos Vector.- (speed * dt, 0)) speed)
-  | otherwise = Nothing
-backgroundObjectStep screenSize dt (Asteroid pos speed)
-  | fst pos > (- int2Float (fst screenSize)) = Just (Asteroid (pos Vector.- (speed * dt, 0)) speed)
   | otherwise = Nothing
 
 spawnBackgroundObject :: (Int, Int) -> IO BackgroundObject
