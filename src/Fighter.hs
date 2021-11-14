@@ -39,7 +39,7 @@ genNewFighters n | n <= 0 = return []
 -- this also takes in the player position, so we can use the gun
 stepFighter :: Float -> [Vector] -> Vector -> Fighter -> Maybe Fighter
 stepFighter dt avoid ppos t@(Fighter position (Dying timer) weapon courage target hit) 
- | timer < 0 = Nothing -- remove it when it's out of range
+ | timer < 0 = Just (Fighter position Dead weapon courage ppos hit) -- remove it when it's dead
  | otherwise = Just (Fighter position (Dying (timer - dt)) weapon courage ppos hit) -- don't move and fire after death
 stepFighter dt avoid ppos t@(Fighter position (Living l) weapon courage target hit)
  | vectorTooFar position 800.0 = Nothing -- remove it when it's out of range
