@@ -1,35 +1,29 @@
 module GameState where
 
-import Model
-import Gun
 import Player
-import System.Random
+import Gun
 import Assets
-import Explosion
+import Turret
 
 data GameState
   = MenuState
-      { rng :: StdGen,
-        assets :: Assets
+      { assets :: Assets
       }
   | PlayingState
       { --elapsedTime :: Float,
         player :: Player,
-        --turrets :: [Turret],
+        turrets :: [Turret],
         --fighters :: [Fighter],
         --tanks :: [Tank],
         --cargoShips :: [CargoShip],
-        explosions :: [Explosion],
+        --explosions :: [Explosion],
         bullets :: [Projectile],
-        --lasers :: [Laser],
-        --playingScore :: Int,
+        playingScore :: Int,
         paused :: Bool,
-        rng :: StdGen,
         assets :: Assets
       }
   | GameOverState
       { finalScore :: Int,
         highScores :: [Int],
-        rng :: StdGen,
         assets :: Assets
       }

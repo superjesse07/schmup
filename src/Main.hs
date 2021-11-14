@@ -14,7 +14,6 @@ import Graphics.Gloss.Juicy
 
 main :: IO ()
 main = do
-  rng <- newStdGen -- rng
   -- load the sprites
   playerSprite <- loadTexture "assets/ship.png"
   laserSprite <- loadTexture "assets/laser.png"
@@ -33,7 +32,7 @@ main = do
     (InWindow "Schmup" (1280, 720) (0, 0)) -- Or FullScreen
     black -- Background color
     60 -- Frames per second
-    (initialState rng assets) -- Initial state
+    (initialState assets) -- Initial state
     view -- View function
     input -- Event function
     step -- Step function

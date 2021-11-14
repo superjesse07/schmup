@@ -70,11 +70,11 @@ instance GunUser Player where
   getGun p@Player {playerWeapon = gun} = gun
   stepGunUser p@Player {playerWeapon = gun} dt = (p {playerWeapon = newGun}, newProjectile)
     where
-      (newGun, newProjectile) = stepGun (playerPosition p Vector.+ (7,0.5)) gun dt
+      (newGun, newProjectile) = stepGun PlayerOwner (playerPosition p Vector.+ (7,0.5)) gun dt
 
 -- helper function to move
 playerAddVelocity :: Player -> Vector -> Player
 playerAddVelocity p v = p {playerVelocity = v Vector.+ playerVelocity p}
 
 instance Default Player where
-  def = Player (0, 0) (Alive 5) (0, 0) (getDefaultGun LaserType)
+  def = Player (0, 0) (Alive 5) (0, 0) (getDefaultGun DefaultType)
