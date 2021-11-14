@@ -59,16 +59,16 @@ stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions
     let (allTurrets, turretProjectiles) = unzip (map (`stepGunUser` dt) (newTurrets ++ turrets))
     let (allFighters, fighterProjectiles) = unzip (map (`stepGunUser` dt) (newFighters ++ fighters))
     -- step the player
-    let steppedPlayer = playerStep newPlayer dt 
+    let steppedPlayer = playerStep newPlayer dt
     -- step the projectiles
     let steppedProjectiles = mapMaybe (stepProjectile dt) (b ++ catMaybes [playerProjectile] ++ catMaybes turretProjectiles ++ catMaybes fighterProjectiles)
     -- step the turrets
     let steppedTurrets = mapMaybe (stepTurret dt (playerPosition newPlayer)) allTurrets
     -- things to avoid
-    let avoidList = map projectilePosition steppedProjectiles ++ [playerPosition newPlayer]
+    let avoidList = mapMaybe (\x -> if projectileOwner x == PlayerOwner then Just (projectilePosition x) else Nothing) steppedProjectiles ++ [playerPosition newPlayer]
     -- fightersm also keep distance from all projectiles + player
     let steppedFighters = mapMaybe (stepFighter dt avoidList (playerPosition newPlayer)) allFighters
-  
+
     steppedBackground <- backgroundStep screenSize dt background
     mappedExplosions <- mapM (stepExplosion dt) explosions
     let steppedExplosions = concat mappedExplosions
@@ -80,16 +80,16 @@ stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions
 input :: Event -> GameState -> IO GameState
 input e gstate = return (inputKey e gstate)
 
-getPlayState :: (Int, Int) -> Assets -> GameState 
+getPlayState :: (Int, Int) -> Assets -> GameState
 getPlayState screenSize assets = PlayingState {
-    assets = assets, 
-    player = def, 
-    paused = False, 
-    bullets = [], 
-    turrets = [], 
-    fighters = [], 
-    explosions = [Explosion (0,0) (Animation 0 0) 4], 
-    playingScore = 0, 
+    assets = assets,
+    player = def,
+    paused = False,
+    bullets = [],
+    turrets = [],
+    fighters = [],
+    explosions = [Explosion (0,0) (Animation 0 0) 4],
+    playingScore = 0,
     screenSize = screenSize,
     background = []
   }
@@ -109,4 +109,4 @@ inputKey ip gs@PlayingState {} = gs {player = playerInput (player gs) ip}
 -- if we are in game over and enter is pressed, move to the game state again
 inputKey (EventKey (SpecialKey KeyEnter) _ _ _) GameOverState {assets = assets, screenSize = screenSize} = getPlayState screenSize assets
 -- Otherwise keep the same
-inputKey _ gstate = gstate 
+inputKey _ gstate = gstate

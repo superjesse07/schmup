@@ -6,7 +6,7 @@ import Debug.Trace
 import Graphics.Gloss
 
 -- ownership, wether the enemy or player owns it
-data OwnerShip = PlayerOwner | EnemyOwner
+data OwnerShip = PlayerOwner | EnemyOwner deriving Eq
 
 -- TODO: include whether the weapon is fired (time since firing) and a cooldown
 -- then adda  method to fire the weapon and return a maybe projectile
@@ -82,6 +82,13 @@ projectilePosition :: Projectile -> Vector
 projectilePosition (LaserProjectile _ p _) = p
 projectilePosition (DefaultProjectile _ _ p) = p
 projectilePosition (BurstProjectile _ _ p) = p
+
+-- and it's owner
+projectileOwner :: Projectile -> OwnerShip
+projectileOwner (LaserProjectile o _ _) = o
+projectileOwner (DefaultProjectile o _ _) = o
+projectileOwner (BurstProjectile o _ _) = o
+
 
 
 isPlayerBullet :: Projectile -> Bool

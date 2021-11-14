@@ -1,6 +1,7 @@
 module Arith where
 
 import Graphics.Gloss
+import GHC.Float
 
 -- because yes idk how imports work
 vectorAdd :: Vector -> Vector -> Vector
@@ -26,4 +27,7 @@ vectorTooFar v f = vectorLength v > f
 
 -- normalize a vector
 vectorNormalize :: Vector -> Vector 
-vectorNormalize v@(x, y) = (x / vectorLength v, y / vectorLength v) 
+vectorNormalize v@(x, y) = (x / lenNotZero, y / lenNotZero)
+  where 
+    len = vectorLength v 
+    lenNotZero = if abs len < 0.001 then 1.0 else len 

@@ -7,7 +7,7 @@ scrollingSpeed = 50.0
 
 -- fighter speed
 fighterSpeed :: Float
-fighterSpeed = 100.0
+fighterSpeed = 65.0
 
 -- player speed
 playerSpeed :: Float
