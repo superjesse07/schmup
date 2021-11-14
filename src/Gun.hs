@@ -83,6 +83,13 @@ projectilePosition (LaserProjectile _ p _) = p
 projectilePosition (DefaultProjectile _ _ p) = p
 projectilePosition (BurstProjectile _ _ p) = p
 
+
+isPlayerBullet :: Projectile -> Bool
+isPlayerBullet (LaserProjectile PlayerOwner _ _) = True
+isPlayerBullet (DefaultProjectile PlayerOwner _ _) = True
+isPlayerBullet (BurstProjectile PlayerOwner _ _) = True
+isPlayerBullet _ = False
+
 -- step for them
 stepProjectile :: Float -> Projectile -> Maybe Projectile
 -- laser projectile, fades after 0.5 seconds

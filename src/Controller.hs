@@ -20,6 +20,7 @@ import Consts
 import Background
 import Explosion
 import Fighter
+import Collision
 
 initialState :: (Int, Int) -> Assets -> GameState
 initialState screenSize assets = MenuState {assets = assets, screenSize = screenSize}
@@ -28,7 +29,9 @@ initialState screenSize assets = MenuState {assets = assets, screenSize = screen
 step :: Float -> GameState -> IO GameState
 step secs gstate@PlayingState {player = p, paused = paused}
   | paused = return gstate
-  | otherwise = stepps secs gstate
+  | otherwise = do
+    ps <- stepps secs gstate
+    return $ handleCollision ps
 -- if the high scores are empty, save the score and load the high scores from the file system
 step secs gs@GameOverState {finalScore = score, highScores = []} = do
   -- add the score to the file

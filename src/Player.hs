@@ -39,7 +39,7 @@ playerView _ _ = Blank
 -- steps the player
 playerStep :: Player -> Float -> Player
 -- only move if we are alive TODO put this under movable
-playerStep p@Player {playerState = Living _} dt = p {playerPosition = pp Vector.+ ((dt Prelude.* playerMoveSpeed) Vector.* pv), playerHitTimer = playerHitTimer p - dt}
+playerStep p@Player {playerState = Living _, playerHitTimer = timer} dt = p {playerPosition = pp Vector.+ ((dt Prelude.* playerMoveSpeed) Vector.* pv), playerHitTimer = timer - dt}
   where
     pv = playerVelocity p
     pp = playerPosition p

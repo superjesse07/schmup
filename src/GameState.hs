@@ -18,7 +18,6 @@ data GameState
         player :: Player,
         turrets :: [Turret],
         fighters :: [Fighter],
-        --tanks :: [Tank],
         --cargoShips :: [CargoShip],
         explosions :: [Explosion],
         bullets :: [Projectile],
