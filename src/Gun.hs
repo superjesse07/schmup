@@ -21,7 +21,7 @@ getDefaultGun BurstType = BurstGun 1.0 10
 -- set the gun to fire
 setGunFire :: Gun -> Gun
 setGunFire (LaserGun t)
-  | t > 0.6 = LaserGun 0.0
+  | t > 0.4 = LaserGun 0.0
   | otherwise = LaserGun t
 setGunFire (DefaultGun t)
   | t > 0.2 = DefaultGun 0.0
@@ -78,19 +78,19 @@ data Projectile = LaserProjectile Vector Float | DefaultProjectle Vector | Burst
 stepProjectile :: Float -> Projectile -> Maybe Projectile
 -- laser projectile, fades after 0.5 seconds
 stepProjectile dt (LaserProjectile h t)
-  | t < 0.5 = Just (LaserProjectile h (t + dt))
+  | t < 0.2 = Just (LaserProjectile (h `vectorAdd` (dt * 0.0,0.0)) (t + dt))
   | otherwise = Nothing
--- default one, dissapears when too far away
+-- default one, disappears when too far away
 stepProjectile dt (DefaultProjectle v)
   | vectorTooFar v 1000.0 = Nothing
   | otherwise = Just (DefaultProjectle (v `vectorAdd` (dt * 300.0, 0.0)))
 -- same for burst
 stepProjectile dt (BurstProjectile v)
   | vectorTooFar v 1000.0 = Nothing
-  | otherwise = Just (BurstProjectile (v `vectorAdd` (dt * 500.0, 0.0)))
+  | otherwise = Just (BurstProjectile (v `vectorAdd` (dt * 200.0, 0.0)))
 
--- view for them
+-- view for them 
 viewProjectile :: Projectile -> Assets -> Picture
-viewProjectile (LaserProjectile h t) _ = uncurry translate (h `vectorAdd` (500.0, 0.0)) (color (withAlpha (1.0 - 2.0 * t) white) (rectangleSolid 1000.0 0.5))
+viewProjectile (LaserProjectile h t) assets@Assets {laserSprite = ls} = uncurry translate (h `vectorAdd` (500.0, 0.0)) (scale 1000 1 ls)
 viewProjectile (DefaultProjectle v) _ = uncurry translate v (color white (circleSolid 1.0))
 viewProjectile (BurstProjectile v) _ = uncurry translate v (color white (rectangleSolid 2.0 0.5))

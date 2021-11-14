@@ -13,6 +13,7 @@ import Gun
 import Model
 import Player
 import System.IO
+import GameState
 import System.Random
 
 initialState :: StdGen -> Assets -> GameState
@@ -22,7 +23,7 @@ initialState gen assets = MenuState {assets = assets, rng = gen}
 step :: Float -> GameState -> IO GameState
 step secs gstate@PlayingState {player = p, paused = paused}
   | paused = return gstate
-  | otherwise = return (stepps secs gstate)
+  | otherwise = (steps secs gstate)
 -- if the high scores are empty, save the score and load the high scores from the file system
 step secs gs@GameOverState {finalScore = score, highScores = []} = do
   -- add the score to the file
@@ -39,8 +40,8 @@ step secs gs@GameOverState {finalScore = score, highScores = []} = do
 step secs gstate = return gstate
 
 -- step the playing state
-stepps :: Float -> GameState -> GameState
-stepps dt gs@PlayingState {player = p, bullets = b} = gs {player = steppedPlayer, bullets = steppedProjectiles}
+steps :: Float -> GameState -> IO GameState
+steps dt gs@PlayingState {player = p, bullets = b} = return $ gs {player = steppedPlayer, bullets = steppedProjectiles}
   where
     -- step the player
     steppedPlayer = playerStep newPlayer dt

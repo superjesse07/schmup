@@ -8,6 +8,7 @@ import Graphics.Gloss
 import Gun
 import Model
 import Player
+import GameState
 
 view :: GameState -> IO Picture
 view = return . scale 4 4 . viewPure

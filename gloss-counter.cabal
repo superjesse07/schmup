@@ -12,7 +12,9 @@ executable gloss-counter
   build-depends:       base >= 4 && < 5,
                        gloss,
                        random,
-                       data-default
+                       data-default,
+                       JuicyPixels,
+                       gloss-juicy
   other-modules:
     Controller
     Model
@@ -20,7 +22,9 @@ executable gloss-counter
     Player
     Assets
     Arith
+    GameState
     Gun
+    Explosion
   hs-source-dirs:      src
   other-modules:       Controller
                      , Model
@@ -28,6 +32,8 @@ executable gloss-counter
                      , Player
                      , Assets
                      , Arith
+                     , GameState
                      , Gun
+                     , Explosion
 
   default-language:    Haskell2010

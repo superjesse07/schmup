@@ -4,7 +4,6 @@ module Model where
 
 import Assets
 import Graphics.Gloss
-import Graphics.Gloss.Data.Vector (Vector)
 import Gun
 import Player
 import System.Random
@@ -13,33 +12,6 @@ data InfoToShow
   = ShowNothing
   | ShowANumber Int
   | ShowAChar Char
-
-data GameState
-  = MenuState
-      { rng :: StdGen,
-        assets :: Assets
-      }
-  | PlayingState
-      { --elapsedTime :: Float,
-        player :: Player,
-        --turrets :: [Turret],
-        --fighters :: [Fighter],
-        --tanks :: [Tank],
-        --cargoShips :: [CargoShip],
-        --explosions :: [Explosion],
-        bullets :: [Projectile],
-        --lasers :: [Laser],
-        --playingScore :: Int,
-        paused :: Bool,
-        rng :: StdGen,
-        assets :: Assets
-      }
-  | GameOverState
-      { finalScore :: Int,
-        highScores :: [Int],
-        rng :: StdGen,
-        assets :: Assets
-      }
 
 data OwnerShip = PlayerOwner | EnemyOwner
 
@@ -52,23 +24,6 @@ class Moveable a where
 data Animation = Animation
   { frame :: Int,
     animationTimer :: Float
-  }
-
-data Explosion = Explosion
-  { explosionAnimation :: Animation,
-    explosionsLeft :: Int
-  }
-
-data Bullet = Bullet
-  { bulletPosition :: Vector,
-    bulletVelocity :: Vector,
-    bulletOwner :: OwnerShip
-  }
-
-data Laser = Laser
-  { laserPosition :: Vector,
-    laserOwner :: OwnerShip,
-    laserAnimation :: Animation
   }
 
 data Turret = Turret
