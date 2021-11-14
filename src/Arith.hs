@@ -23,3 +23,7 @@ vectorDist a b = vectorLength (a `vectorSub` b)
 -- check if a vector is too far away
 vectorTooFar :: Vector -> Float -> Bool
 vectorTooFar v f = vectorLength v > f
+
+-- normalize a vector
+vectorNormalize :: Vector -> Vector 
+vectorNormalize v@(x, y) = (x / vectorLength v, y / vectorLength v) 

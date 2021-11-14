@@ -8,7 +8,8 @@ import Explosion
 
 data GameState
   = MenuState
-      { assets :: Assets
+      { assets :: Assets,
+        screenSize :: (Int, Int)
       }
   | PlayingState
       { --elapsedTime :: Float,
@@ -21,10 +22,12 @@ data GameState
         bullets :: [Projectile],
         playingScore :: Int,
         paused :: Bool,
-        assets :: Assets
+        assets :: Assets,
+        screenSize :: (Int, Int)
       }
   | GameOverState
       { finalScore :: Int,
         highScores :: [Int],
-        assets :: Assets
+        assets :: Assets,
+        screenSize :: (Int, Int)
       }

@@ -66,7 +66,7 @@ playerInput p _ = p
 
 -- implement the gun firing for the player
 instance GunUser Player where
-  fireGun p@Player {playerWeapon = gun} = p {playerWeapon = setGunFire gun}
+  fireGun p@Player {playerWeapon = gun} = p {playerWeapon = setGunFire (1.0, 0.0) gun}
   getGun p@Player {playerWeapon = gun} = gun
   stepGunUser p@Player {playerWeapon = gun} dt = (p {playerWeapon = newGun}, newProjectile)
     where
@@ -77,4 +77,4 @@ playerAddVelocity :: Player -> Vector -> Player
 playerAddVelocity p v = p {playerVelocity = v Vector.+ playerVelocity p}
 
 instance Default Player where
-  def = Player (0, 0) (Alive 5) (0, 0) (getDefaultGun LaserType)
+  def = Player (0, 0) (Alive 5) (0, 0) (getDefaultGun DefaultType)

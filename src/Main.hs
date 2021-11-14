@@ -32,7 +32,7 @@ main = do
     (InWindow "Schmup" (1280, 720) (0, 0)) -- Or FullScreen
     black -- Background color
     60 -- Frames per second
-    (initialState assets) -- Initial state
+    (initialState (1280, 720) assets) -- Initial state
     view -- View function
     input -- Event function
     step -- Step function

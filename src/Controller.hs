@@ -13,15 +13,14 @@ import Gun
 import Model
 import Player
 import System.IO
-import GameState
 import System.Random
 import GameState
 import Turret
 import Consts
 import Explosion
 
-initialState :: Assets -> GameState
-initialState assets = MenuState {assets = assets}
+initialState :: (Int, Int) -> Assets -> GameState
+initialState screenSize assets = MenuState {assets = assets, screenSize = screenSize}
 
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
@@ -50,40 +49,40 @@ stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions
     newTurrets <- genNewTurrets (numTurrets - length turrets)
     -- step the projectiles
     let (newPlayer, playerProjectile) = stepGunUser p dt
+    let (allTurrets, turretProjectiles) = unzip (map (`stepGunUser` dt) (newTurrets ++ turrets))
     -- step the player
     let steppedPlayer = playerStep newPlayer dt 
     -- step the projectiles
-    let steppedProjectiles = mapMaybe (stepProjectile dt) (b ++ catMaybes  [playerProjectile])
+    let steppedProjectiles = mapMaybe (stepProjectile dt) (b ++ catMaybes [playerProjectile] ++ catMaybes turretProjectiles)
     -- step the turrets
-    let steppedTurrets = mapMaybe (stepTurret dt (playerPosition newPlayer)) (newTurrets ++ turrets)
+    let steppedTurrets = mapMaybe (stepTurret dt (playerPosition newPlayer)) allTurrets
 
     mappedExplosions <- mapM (stepExplosion dt) explosions
     let steppedExplosions = concat mappedExplosions
 
     -- return the modified gamestate
-    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets,explosions = steppedExplosions}
+    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets, explosions = steppedExplosions}
 
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
 input e gstate = return (inputKey e gstate)
 
+getPlayState :: (Int, Int) -> Assets -> GameState 
+getPlayState screenSize assets = PlayingState {assets = assets, player = def, paused = False, bullets = [], turrets = [],explosions = [Explosion (0,0) (Animation 0 0) 4], playingScore = 0, screenSize = screenSize}
+
 -- TODO: use monads for this, as it makes it a lot easier to do with do ... return
 inputKey :: Event -> GameState -> GameState
+-- resize the screen
+inputKey (EventResize (x, y)) gs = gs {screenSize = (x, y)}
 -- on enter pressed, switch to the playing state
-inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {assets = assets} = PlayingState {assets = assets, player = def, paused = False, bullets = [], turrets = [],explosions = [Explosion (0,0) (Animation 0 0) 4], playingScore = 0}
--- do the same if we are in the game over screen
--- TODO
+inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {assets = assets, screenSize = screenSize} = getPlayState screenSize assets
 -- check for pausing
 inputKey (EventKey (SpecialKey KeyEsc) Down _ _) gs@PlayingState {paused = p} = gs {paused = not p}
 -- end the game, for testing
-inputKey (EventKey (SpecialKey KeyEnd) Down _ _) gs@PlayingState {assets = assets, playingScore = score} = GameOverState score [] assets
+inputKey (EventKey (SpecialKey KeyEnd) Down _ _) gs@PlayingState {assets = assets, playingScore = score, screenSize = screenSize} = GameOverState score [] assets screenSize
 -- in the playing state, send inputs to the player
 inputKey ip gs@PlayingState {} = gs {player = playerInput (player gs) ip}
 -- if we are in game over and enter is pressed, move to the game state again
-
--- if we are in the playing state, check for arrow keys
-
---inputKey (EventKey (Char c) _ _ _) gstate
--- = -- If the user presses a character key, show that one
---gstate { infoToShow = ShowAChar c }
-inputKey _ gstate = gstate -- Otherwise keep the same
+inputKey (EventKey (SpecialKey KeyEnter) _ _ _) GameOverState {assets = assets, screenSize = screenSize} = getPlayState screenSize assets
+-- Otherwise keep the same
+inputKey _ gstate = gstate 
