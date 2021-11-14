@@ -30,7 +30,8 @@ main = do
             laserSprite = laserSprite,
             explosionSprites = explosionSprites,
             bulletSprite = bulletSprite,
-            cargoShipSprite = cargoShipSprite
+            cargoShipSprite = cargoShipSprite,
+            starSprite = starSprite
           }
 
   -- next up, load the actual game

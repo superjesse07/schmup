@@ -7,5 +7,6 @@ data Assets = Assets
     laserSprite :: Picture,
     cargoShipSprite :: Picture,
     bulletSprite :: Picture,
-    explosionSprites :: [Picture]
+    explosionSprites :: [Picture],
+    starSprite :: Picture
   }

@@ -17,6 +17,7 @@ import System.Random
 import GameState
 import Turret
 import Consts
+import Background
 import Explosion
 
 initialState :: (Int, Int) -> Assets -> GameState
@@ -44,7 +45,7 @@ step secs gstate = return gstate
 
 -- step the playing state
 stepps :: Float -> GameState -> IO GameState
-stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions = explosions} = do
+stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions = explosions, screenSize = screenSize, background = background} = do
     -- generate new turrets, if any, hardcode 3 turrets here
     newTurrets <- genNewTurrets (numTurrets - length turrets)
     -- step the projectiles
@@ -56,19 +57,21 @@ stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions
     let steppedProjectiles = mapMaybe (stepProjectile dt) (b ++ catMaybes [playerProjectile] ++ catMaybes turretProjectiles)
     -- step the turrets
     let steppedTurrets = mapMaybe (stepTurret dt (playerPosition newPlayer)) allTurrets
+    steppedBackground <- backgroundStep screenSize dt background
+    traceIO (show $ length steppedBackground)
 
     mappedExplosions <- mapM (stepExplosion dt) explosions
     let steppedExplosions = concat mappedExplosions
 
     -- return the modified gamestate
-    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets, explosions = steppedExplosions}
+    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets, explosions = steppedExplosions,background = steppedBackground}
 
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
 input e gstate = return (inputKey e gstate)
 
 getPlayState :: (Int, Int) -> Assets -> GameState 
-getPlayState screenSize assets = PlayingState {assets = assets, player = def, paused = False, bullets = [], turrets = [],explosions = [Explosion (0,0) (Animation 0 0) 4], playingScore = 0, screenSize = screenSize}
+getPlayState screenSize assets = PlayingState {assets = assets, player = def, paused = False, bullets = [], turrets = [],explosions = [Explosion (0,0) (Animation 0 0) 4],background = [], playingScore = 0, screenSize = screenSize}
 
 -- TODO: use monads for this, as it makes it a lot easier to do with do ... return
 inputKey :: Event -> GameState -> GameState

@@ -1,26 +1,37 @@
 module Background where
 
-import Graphics.Gloss.Data.Picture (Vector)
+import Assets
+import Consts
+import Data.Maybe (mapMaybe)
+import GHC.Float (int2Float)
+import Graphics.Gloss.Data.Picture
+import qualified Graphics.Gloss.Data.Point.Arithmetic as Vector
 import Graphics.Gloss.Interface.Environment (getScreenSize)
 import System.Random.Stateful (randomIO)
-import GHC.Float (int2Float)
+import Debug.Trace (traceIO)
 
 data BackgroundObject = Star Vector Float | Asteroid Vector Float
 
-backgroundStep :: Float -> [BackgroundObject] -> IO [BackgroundObject]
-backgroundStep dt background
-  | length background < 100 = do
-    newObject <- spawnBackgroundObject
-    return $ newObject : map (backgroundObjectStep dt) background
-  | otherwise = return $ map (backgroundObjectStep dt) background
+backgroundStep :: (Int, Int) -> Float -> [BackgroundObject] -> IO [BackgroundObject]
+backgroundStep screenSize dt background = do
+    newObject <- spawnBackgroundObject screenSize
+    return $ newObject : mapMaybe (backgroundObjectStep screenSize dt) background
 
-backgroundObjectStep :: Float -> BackgroundObject -> BackgroundObject
-backgroundObjectStep = undefined
+backgroundObjectStep :: (Int, Int) -> Float -> BackgroundObject -> Maybe BackgroundObject
+backgroundObjectStep screenSize dt (Star pos speed)
+  | fst pos > (- int2Float (fst screenSize)) = Just (Star (pos Vector.- (speed * dt, 0)) speed)
+  | otherwise = Nothing
+backgroundObjectStep screenSize dt (Asteroid pos speed)
+  | fst pos > (- int2Float (fst screenSize)) = Just (Asteroid (pos Vector.- (speed * dt, 0)) speed)
+  | otherwise = Nothing
 
-spawnBackgroundObject :: IO BackgroundObject
-spawnBackgroundObject = do
-  screenSize <- getScreenSize
+spawnBackgroundObject :: (Int, Int) -> IO BackgroundObject
+spawnBackgroundObject screenSize = do
   randomHeight <- randomIO :: IO Float
   speed <- randomIO :: IO Float
-  let position = (int2Float (fst screenSize) + 100,randomHeight * int2Float (snd screenSize))
-  return $ Star position speed
+
+  let position = (int2Float (fst screenSize), (randomHeight * 2 - 1) * int2Float (snd screenSize))
+  return $ Star (fst position / windowScaling, snd position / windowScaling) ((speed + 1) * 100)
+
+viewBackground :: Assets -> BackgroundObject -> Picture
+viewBackground assets (Star pos _) = uncurry translate pos (starSprite assets)
