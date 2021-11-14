@@ -45,13 +45,12 @@ stepTurret dt ppos t@(Turret position (Living health) weapon time target hit)
  where 
    weaponFireFunc | time > 1.0 && vectorDist target position < 150.0 = fireTurretWeapon -- only fire once a second, firing every possible time is too insane and will result in touhou
                   | otherwise  = id
-   fireTurretWeapon = fmap (withTimeReset  . fireGun)
-   withTimeReset t = t {turretFireTime = 0.0}
+   fireTurretWeapon = fmap fireGun
 
 -- turrets have a gun, so use that
 instance GunUser Turret where 
   -- fire the gun at the player
-  fireGun p@Turret {turretWeapon = gun, turretTarget = target, turretPosition = position} = p {turretWeapon = setGunFire (target `vectorSub` position) gun} -- not really used because we have fireWeapon
+  fireGun p@Turret {turretWeapon = gun, turretTarget = target, turretPosition = position} = p {turretWeapon = setGunFire (target `vectorSub` position) gun, turretFireTime = 0.0} -- not really used because we have fireWeapon
   getGun = turretWeapon
   stepGunUser p@Turret {turretPosition = position, turretWeapon = gun, turretTarget = target} dt = (p {turretWeapon = newGun}, newProjectile)
     where

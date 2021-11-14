@@ -9,7 +9,7 @@ import qualified Graphics.Gloss.Data.Point.Arithmetic as Vector
 import Graphics.Gloss.Interface.IO.Game
 import Gun
 import Consts 
-import Model
+import Model ( LivingState(Dying, Living) )
 
 -- player movement speed
 playerMoveSpeed :: Float
