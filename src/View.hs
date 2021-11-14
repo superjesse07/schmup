@@ -33,11 +33,12 @@ viewPure GameOverState {finalScore = score, highScores = hi} = Pictures ([messag
     scoreImage = zipWith (\idx img -> translate 0.0 ((- idx) * 15.0 - 30.0) img) [0 .. 10] imageScores
 
 -- show all entities, and the state if paused
-viewPure PlayingState {player = player, assets = assets, bullets = bullets, turrets = turrets,fighters = fighters, cargoShips = cargoShips, background = background, explosions = explosions, paused = paused, playingScore = score, screenSize = (x, y)} = Pictures (backgroundPictures ++ (scorePicture : playerPicture : pausedPicture : (projectilePictures ++ turretPictures ++ fighterPictures ++ cargoShipPictures ++ explosionPictures)))
+viewPure PlayingState {player = player, assets = assets, bullets = bullets, turrets = turrets,fighters = fighters, cargoShips = cargoShips, cargoDrops = cargoDrops, background = background, explosions = explosions, paused = paused, playingScore = score, screenSize = (x, y)} = Pictures (backgroundPictures ++ (scorePicture : playerPicture : pausedPicture : (projectilePictures ++ turretPictures ++ fighterPictures ++ cargoShipPictures ++ cargoDropPictures ++ explosionPictures)))
   where
     turretPictures = map (`turretView` assets) turrets
     fighterPictures = map (`fighterView` assets) fighters
     cargoShipPictures = map (`cargoShipView` assets) cargoShips
+    cargoDropPictures = map (`cargoPickupView` assets) cargoDrops
     playerPicture = playerView player assets
     projectilePictures = map (`viewProjectile` assets) bullets
     explosionPictures = map (viewExplosion assets) explosions

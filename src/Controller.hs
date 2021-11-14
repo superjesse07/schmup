@@ -50,7 +50,7 @@ step secs gstate = return gstate
 
 -- step the playing state
 stepps :: Float -> GameState -> IO GameState
-stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions = explosions, screenSize = screenSize, background = background, fighters = fighters, cargoShips = cargoShips} = do
+stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions = explosions, screenSize = screenSize, background = background, fighters = fighters, cargoShips = cargoShips, cargoDrops = cargoDrops} = do
     -- generate new turrets, if any, hardcode 3 turrets here
     newTurrets <- genNewTurrets (numTurrets - length turrets)
     -- and fighters
@@ -74,23 +74,26 @@ stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions
     let steppedCargoShips = mapMaybe (stepCargoShip dt avoidList) allCargoShips
     -- fighters also keep distance from all projectiles + player
     let steppedFighters = mapMaybe (stepFighter dt avoidList (playerPosition newPlayer)) allFighters
+    -- step the cargo drops
+    let steppedCargoDrops = map (stepCargoPickup dt) cargoDrops
     -- background
     steppedBackground <- backgroundStep screenSize dt background
     mappedExplosions <- mapM (stepExplosion dt) explosions
     let steppedExplosions = concat mappedExplosions
 
     -- return the modified gamestate
-    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets, explosions = steppedExplosions,fighters = steppedFighters, background = steppedBackground, cargoShips = steppedCargoShips}
+    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets, explosions = steppedExplosions,fighters = steppedFighters, background = steppedBackground, cargoShips = steppedCargoShips, cargoDrops  = steppedCargoDrops}
 
 
 explode :: GameState -> GameState
-explode gstate@PlayingState {player = player, turrets = turrets, fighters = fighters, explosions = explosions,playingScore = score,cargoShips = cargoShips}
+explode gstate@PlayingState {player = player, turrets = turrets, fighters = fighters, explosions = explosions,cargoDrops = cargoDrops, playingScore = score,cargoShips = cargoShips}
   | isDead player = GameOverState score [] (assets gstate) (screenSize gstate)
-  | otherwise =  gstate {explosions = explosions ++ newExplosions ++ playerExplosion, playingScore = score + (length newExplosions * 100)}
+  | otherwise =  gstate {explosions = explosions ++ newExplosions ++ playerExplosion, cargoDrops = cargoDrops ++ newCargoDrops, playingScore = score + (length newExplosions * 100)}
   where
       turretExplosions = map (newExplosion 4 . turretPosition) (filter justDying turrets)
       fighterExplosions = map (newExplosion 4 . fighterPosition) (filter justDying fighters)
       cargoExplosions = map (newExplosion 4 . cargoShipPosition) (filter justDying cargoShips)
+      newCargoDrops = mapMaybe fromCargoShip (filter justDying cargoShips)
       playerExplosion
         | justDying player = [newExplosion 10 (playerPosition player)]
         | otherwise = []
@@ -113,6 +116,7 @@ getPlayState screenSize assets = PlayingState {
     playingScore = 0,
     screenSize = screenSize,
     background = [],
+    cargoDrops = [],
     cargoShips = []
   }
 
