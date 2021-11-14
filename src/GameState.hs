@@ -4,6 +4,7 @@ import Player
 import Gun
 import Assets
 import Turret
+import Background
 import Explosion
 
 data GameState
@@ -19,6 +20,7 @@ data GameState
         --cargoShips :: [CargoShip],
         explosions :: [Explosion],
         bullets :: [Projectile],
+        background :: [BackgroundObject],
         playingScore :: Int,
         paused :: Bool,
         assets :: Assets

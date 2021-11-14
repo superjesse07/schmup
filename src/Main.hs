@@ -18,13 +18,19 @@ main = do
   playerSprite <- loadTexture "assets/ship.png"
   laserSprite <- loadTexture "assets/laser.png"
   explosionSprites <- loadAnimation "assets/explosion" 5
+  cargoShipSprite <- loadTexture "assets/cargoship.png"
+  starSprite <- loadTexture "assets/star.png"
+  turretSprite <- loadTexture "assets/turret.png"
+  bulletSprite <- loadTexture "assets/bullet.png"
 
   -- make the assets
   let assets =
         Assets
           { playerSprite = playerSprite,
             laserSprite = laserSprite,
-            explosionSprites = explosionSprites
+            explosionSprites = explosionSprites,
+            bulletSprite = bulletSprite,
+            cargoShipSprite = cargoShipSprite
           }
 
   -- next up, load the actual game

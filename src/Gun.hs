@@ -96,5 +96,5 @@ stepProjectile dt (BurstProjectile o v)
 viewProjectile :: Projectile -> Assets -> Picture
 viewProjectile (LaserProjectile _ h t) assets@Assets {laserSprite = ls} = uncurry translate (h `vectorAdd` (500.0, 0.0)) (scale 1000.0 (1.0 - (a * a * a)) ls)
   where a = 4.0 * t
-viewProjectile (DefaultProjectile _ v) _ = uncurry translate v (color white (circleSolid 1.0))
-viewProjectile (BurstProjectile _ v) _ = uncurry translate v (color white (rectangleSolid 2.0 0.5))
+viewProjectile (DefaultProjectile _ v) assets@Assets {bulletSprite = bs} = uncurry translate v bs
+viewProjectile (BurstProjectile _ v) assets@Assets {bulletSprite = bs} = uncurry translate v bs

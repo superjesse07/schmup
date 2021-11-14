@@ -11,9 +11,10 @@ import Gun
 import Model
 import Player
 import Turret
+import Consts
 
 view :: GameState -> IO Picture
-view = return . scale 4 4 . viewPure
+view = return . scale windowScaling windowScaling . viewPure
 
 viewPure :: GameState -> Picture
 -- show the main menu
