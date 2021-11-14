@@ -9,5 +9,9 @@ scrollingSpeed = 50.0
 numTurrets :: Int 
 numTurrets = 3
 
+-- number of fighters
+numFighters :: Int 
+numFighters = 4
+
 windowScaling :: Float
 windowScaling = 4

@@ -18,6 +18,7 @@ import GameState
 import Turret
 import Consts
 import Explosion
+import Fighter
 
 initialState :: (Int, Int) -> Assets -> GameState
 initialState screenSize assets = MenuState {assets = assets, screenSize = screenSize}
@@ -44,31 +45,46 @@ step secs gstate = return gstate
 
 -- step the playing state
 stepps :: Float -> GameState -> IO GameState
-stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions = explosions} = do
-    -- generate new turrets, if any, hardcode 3 turrets here
+stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets, fighters = fighters, explosions = explosions} = do
+    -- generate new turrets, if any
     newTurrets <- genNewTurrets (numTurrets - length turrets)
+    -- and fighters
+    newFighters <- genNewFighters (numFighters  - length fighters)
     -- step the projectiles
     let (newPlayer, playerProjectile) = stepGunUser p dt
     let (allTurrets, turretProjectiles) = unzip (map (`stepGunUser` dt) (newTurrets ++ turrets))
+    let (allFighters, fighterProjectiles) = unzip (map (`stepGunUser` dt) (newFighters ++ fighters))
     -- step the player
     let steppedPlayer = playerStep newPlayer dt 
     -- step the projectiles
     let steppedProjectiles = mapMaybe (stepProjectile dt) (b ++ catMaybes [playerProjectile] ++ catMaybes turretProjectiles)
     -- step the turrets
     let steppedTurrets = mapMaybe (stepTurret dt (playerPosition newPlayer)) allTurrets
-
+    -- fighters
+    let steppedFighters = mapMaybe (stepFighter dt (playerPosition newPlayer)) allFighters
+  
     mappedExplosions <- mapM (stepExplosion dt) explosions
     let steppedExplosions = concat mappedExplosions
 
     -- return the modified gamestate
-    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets, explosions = steppedExplosions}
+    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets, fighters = steppedFighters, explosions = steppedExplosions}
 
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
 input e gstate = return (inputKey e gstate)
 
 getPlayState :: (Int, Int) -> Assets -> GameState 
-getPlayState screenSize assets = PlayingState {assets = assets, player = def, paused = False, bullets = [], turrets = [],explosions = [Explosion (0,0) (Animation 0 0) 4], playingScore = 0, screenSize = screenSize}
+getPlayState screenSize assets = PlayingState {
+    assets = assets, 
+    player = def, 
+    paused = False, 
+    bullets = [], 
+    turrets = [], 
+    fighters = [], 
+    explosions = [Explosion (0,0) (Animation 0 0) 4], 
+    playingScore = 0, 
+    screenSize = screenSize
+  }
 
 -- TODO: use monads for this, as it makes it a lot easier to do with do ... return
 inputKey :: Event -> GameState -> GameState
