@@ -20,6 +20,7 @@ data GameState
         turrets :: [Turret],
         fighters :: [Fighter],
         cargoShips :: [CargoShip],
+        cargoDrops :: [CargoPickup],
         explosions :: [Explosion],
         bullets :: [Projectile],
         background :: [BackgroundObject],

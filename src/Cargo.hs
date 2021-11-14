@@ -14,8 +14,21 @@ import Avoidance
 -- cargo ship pickup
 data CargoPickup = CargoPickup {
     cargoPosition :: Vector,
-    cargoType :: Maybe GunType
+    cargoType :: GunType
 }
+
+-- generate a cargo pickup from the ship
+fromCargoShip :: CargoShip -> Maybe CargoPickup
+fromCargoShip CargoShip { cargoShipPosition = pos, cargoShipPickup = Just cargoType} = Just (CargoPickup pos cargoType)
+fromCargoShip _ = Nothing
+
+-- step it
+stepCargoPickup :: Float -> CargoPickup -> CargoPickup
+stepCargoPickup dt (CargoPickup pos cargoType) = CargoPickup (pos `vectorAdd` (-dt * scrollingSpeed, 0.0)) cargoType
+
+-- view it
+cargoPickupView :: CargoPickup -> Assets -> Picture 
+cargoPickupView (CargoPickup v _) assets = uncurry translate v (color red (circle 5.0))
 
 -- cargoShip enemy
 data CargoShip = CargoShip
