@@ -7,6 +7,7 @@ import Turret
 import Background
 import Explosion
 import Fighter
+import Cargo
 
 data GameState
   = MenuState
@@ -14,11 +15,11 @@ data GameState
         screenSize :: (Int, Int)
       }
   | PlayingState
-      { --elapsedTime :: Float,
+      { 
         player :: Player,
         turrets :: [Turret],
         fighters :: [Fighter],
-        --cargoShips :: [CargoShip],
+        cargoShips :: [CargoShip],
         explosions :: [Explosion],
         bullets :: [Projectile],
         background :: [BackgroundObject],

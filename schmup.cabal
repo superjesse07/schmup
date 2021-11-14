@@ -30,6 +30,7 @@ executable gloss-counter
     Fighter
     Avoidance
     Collision
+    Cargo
   hs-source-dirs:      src
   other-modules:       Controller
                      , Model
@@ -45,5 +46,6 @@ executable gloss-counter
                      , Fighter
                      , Avoidance
                      , Collision
+                     , Cargo
 
   default-language:    Haskell2010
