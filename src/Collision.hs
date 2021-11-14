@@ -10,20 +10,23 @@ import Fighter
 import GameState
 import Data.Maybe (fromMaybe, mapMaybe)
 import Debug.Trace (trace)
+import Cargo
 
 isColliding :: (Vector, Vector) -> (Vector, Vector) -> Bool
 isColliding ((leftA, bottomA), (rightA, topA)) ((leftB, bottomB), (rightB, topB)) = leftA < rightB && rightA > leftB && bottomA < topB && topA > bottomB
 
 handleCollision :: GameState -> GameState
-handleCollision gstate@PlayingState {player = player, turrets = turrets, fighters = fighters, bullets = bullets} = let
+handleCollision gstate@PlayingState {player = player, turrets = turrets, fighters = fighters, bullets = bullets,cargoShips = cargoShips} = let
 
   collidedPlayer = collideWith (player) $ filter (not . isPlayerBullet) bullets
   collidedFighters = mapMaybe (`collideWith` filter isPlayerBullet bullets) fighters
   collidedTurret = mapMaybe (`collideWith` filter isPlayerBullet bullets) turrets
+  collidedCargoShips = mapMaybe(`collideWith` filter isPlayerBullet bullets) cargoShips
   collidedBulletsEnemy = mapMaybe (`collideWith` [player]) $ filter (not . isPlayerBullet) bullets
-  collidedBulletsPlayer = mapMaybe ((`collideWithMaybe` fighters) . (`collideWith` turrets)) $ filter isPlayerBullet bullets
+  collidedBulletsPlayer = mapMaybe ((`collideWithMaybe` cargoShips) . (`collideWithMaybe` fighters) . (`collideWith` turrets)) $ filter isPlayerBullet bullets
 
-  in gstate {player = fromMaybe player collidedPlayer, bullets = collidedBulletsEnemy ++ collidedBulletsPlayer,fighters=collidedFighters,turrets = collidedTurret}
+
+  in gstate {player = fromMaybe player collidedPlayer, bullets = collidedBulletsEnemy ++ collidedBulletsPlayer,fighters=collidedFighters,turrets = collidedTurret,cargoShips = collidedCargoShips}
 
 
 
@@ -71,4 +74,12 @@ instance Collision Fighter where
     | timer > 0 = Just t
     | isColliding (getHitBox t) (getHitBox other) && health == 1 = Just t {fighterHealth = Dying 1}
     | isColliding (getHitBox t) (getHitBox other) = Just t {fighterHealth = Living (health - 1), fighterHitTimer = 0.1}
+  checkCollision t other = Just t
+
+instance Collision CargoShip where
+  getHitBox t@CargoShip {cargoShipPosition = pos} = (pos Vector.- (4, 4), pos Vector.+ (4, 4))
+  checkCollision t@CargoShip {cargoShipHealth = (Living health), cargoShipHitTimer = timer} other
+    | timer > 0 = Just t
+    | isColliding (getHitBox t) (getHitBox other) && health == 1 = Just t {cargoShipHealth = Dying 1}
+    | isColliding (getHitBox t) (getHitBox other) = Just t {cargoShipHealth = Living (health - 1), cargoShipHitTimer = 0.1}
   checkCollision t other = Just t

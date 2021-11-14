@@ -42,7 +42,12 @@ viewPure PlayingState {player = player, assets = assets, bullets = bullets, turr
     projectilePictures = map (`viewProjectile` assets) bullets
     explosionPictures = map (viewExplosion assets) explosions
     backgroundPictures = map (viewBackground assets) background
-    scorePicture = translate (- int2Float x * 0.125 + 5.0) (- int2Float y * 0.125 + 5.0) (scale 0.1 0.1 (color white (text ("Score: " ++ show score))))
+    scorePicture = translate (- int2Float x * 0.125 + 5.0) (- int2Float y * 0.125 + 5.0) (scale 0.1 0.1 (color white (text ("Score: " ++ show score ++ " Health: " ++ show (getHealth player)))))
     pausedPicture
       | paused = color white (text "Paused")
       | otherwise = Blank
+
+
+getHealth :: Player -> Int
+getHealth Player {playerState = (Living i)} = i
+getHealth _ = 0

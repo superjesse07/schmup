@@ -10,6 +10,7 @@ import Gun
 import Model
 import Avoidance
 
+
 -- cargo ship pickup
 data CargoPickup = CargoPickup {
     cargoPosition :: Vector,
@@ -45,18 +46,26 @@ genNewCargoShips n | n <= 0 = return []
 -- this also takes in what we want to avoid
 stepCargoShip :: Float -> [Vector] -> CargoShip -> Maybe CargoShip
 stepCargoShip dt avoid t@(CargoShip position (Dying timer) pickup hit)
-  | timer < 0 = Just (CargoShip position Dead pickup 0)
+  | timer < 0 = Nothing
   | otherwise = Just (CargoShip position (Dying (timer - dt)) pickup 0)
 stepCargoShip dt avoid t@(CargoShip position (Living health) pickup hit)
  | vectorTooFar position 800.0 = Nothing -- remove it when it's out of range
  | otherwise                   = Just (CargoShip (moveFunc `vectorAdd` (-dt * scrollingSpeed, 0.0)) (Living health) pickup (hit-dt))
  where
-  moveFunc = case avoidAction 200.0 position avoid of 
+  moveFunc = case avoidAction 50.0 position avoid of
      Nothing  -> position `vectorAdd` (-dt * cargoSpeed, if snd position > 0.0 then -dt * cargoSpeed * 0.5 else dt * cargoSpeed * 0.5)
      Just dir -> position `vectorAdd` (dir `vectorMulFloat` (dt * cargoSpeed))
 
 -- view a cargoShip
 cargoShipView :: CargoShip -> Assets -> Picture
 cargoShipView (CargoShip v h pickup hit) assets
- | hit < 0 = uncurry translate v (color red (circle 12.0))
+ | hit < 0 = uncurry translate v (color red (cargoShipSprite assets))
  | otherwise = Blank
+
+instance LivingObject CargoShip where
+  isDead (CargoShip _ Dead _ _) = True
+  isDead _ = False
+  justDying (CargoShip _ (Dying t) _ _)
+    | t >= 1 = True
+    | otherwise = False
+  justDying _ = False

@@ -84,16 +84,17 @@ stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions
 
 
 explode :: GameState -> GameState
-explode gstate@PlayingState {player = player, turrets = turrets, fighters = fighters, explosions = explosions,playingScore = score}
+explode gstate@PlayingState {player = player, turrets = turrets, fighters = fighters, explosions = explosions,playingScore = score,cargoShips = cargoShips}
   | isDead player = GameOverState score [] (assets gstate) (screenSize gstate)
-  | otherwise =  gstate {explosions = explosions ++ newExplosions, playingScore = score + (length newExplosions * 100)}
+  | otherwise =  gstate {explosions = explosions ++ newExplosions ++ playerExplosion, playingScore = score + (length newExplosions * 100)}
   where
       turretExplosions = map (newExplosion 4 . turretPosition) (filter justDying turrets)
       fighterExplosions = map (newExplosion 4 . fighterPosition) (filter justDying fighters)
+      cargoExplosions = map (newExplosion 4 . cargoShipPosition) (filter justDying cargoShips)
       playerExplosion
         | justDying player = [newExplosion 10 (playerPosition player)]
         | otherwise = []
-      newExplosions = turretExplosions ++ fighterExplosions ++ playerExplosion
+      newExplosions = turretExplosions ++ fighterExplosions ++ cargoExplosions
 
 
 -- | Handle user input
