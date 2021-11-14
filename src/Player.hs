@@ -2,14 +2,14 @@ module Player where
 
 import Arith
 import Assets
+import Consts
 import Data.Default
 import Debug.Trace
 import Graphics.Gloss
 import qualified Graphics.Gloss.Data.Point.Arithmetic as Vector
 import Graphics.Gloss.Interface.IO.Game
 import Gun
-import Consts 
-import Model ( LivingState(Dying, Living) )
+import Model
 
 -- player movement speed
 playerMoveSpeed :: Float
@@ -44,7 +44,9 @@ playerStep p@Player {playerState = Living _, playerHitTimer = timer} dt = p {pla
     pv = playerVelocity p
     pp = playerPosition p
 -- if we are dying, increase the time since death
-playerStep p@Player {playerState = Dying t} dt = p {playerState = Dying (t Prelude.+ dt)}
+playerStep p@Player {playerState = Dying t} dt
+  | t< 0 = p {playerState = Dead}
+  | otherwise = p {playerState = Dying (t Prelude.- dt)}
 -- if we are dead, do nothing
 playerStep p _ = p
 
@@ -73,7 +75,7 @@ instance GunUser Player where
   getGun p@Player {playerWeapon = gun} = gun
   stepGunUser p@Player {playerWeapon = gun} dt = (p {playerWeapon = newGun}, newProjectile)
     where
-      (newGun, newProjectile) = stepGun PlayerOwner (playerPosition p Vector.+ (7,0.5)) gun dt
+      (newGun, newProjectile) = stepGun PlayerOwner (playerPosition p Vector.+ (7, 0.5)) gun dt
 
 -- helper function to move
 playerAddVelocity :: Player -> Vector -> Player
@@ -81,3 +83,11 @@ playerAddVelocity p v = p {playerVelocity = v Vector.+ playerVelocity p}
 
 instance Default Player where
   def = Player (0, 0) (Living 5) (0, 0) (getDefaultGun DefaultType) 0
+
+instance LivingObject Player where
+  isDead (Player _ Dead _ _ _) = True
+  isDead _ = False
+  justDying (Player _ (Dying t) _ _ _)
+    | t >= 3 = True
+    | otherwise = False
+  justDying _ = False

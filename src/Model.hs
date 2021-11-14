@@ -12,3 +12,6 @@ data Animation = Animation
 
 data LivingState = Living Int | Dying Float | Dead
 
+class LivingObject a where
+  isDead :: a -> Bool
+  justDying :: a -> Bool

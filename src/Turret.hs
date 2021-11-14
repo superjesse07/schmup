@@ -37,7 +37,7 @@ genNewTurrets n | n <= 0 = return []
 -- this also takes in the player position, so we can use the gun
 stepTurret :: Float -> Vector -> Turret -> Maybe Turret
 stepTurret dt ppos t@(Turret position (Dying timer) weapon time target hit)
-  | timer < 0 =  Just (Turret position Dead weapon time target 0)
+  | timer < 0 =  Nothing
   | otherwise = Just (Turret position (Dying (timer - dt)) weapon time target 0)
 stepTurret dt ppos t@(Turret position (Living health) weapon time target hit)
  | vectorTooFar position 800.0 = Nothing -- remove it when it's out of range
@@ -61,3 +61,11 @@ turretView :: Turret -> Assets -> Picture
 turretView (Turret v h _ _ _ hit) assets
  | hit < 0 = uncurry translate v (color white (circle 5.0))
  | otherwise = Blank
+
+instance LivingObject Turret where
+  isDead (Turret _ Dead _ _ _ _) = True
+  isDead _ = False
+  justDying (Turret _ (Dying t) _ _ _ _)
+    | t >= 1 = True
+    | otherwise = False
+  justDying _ = False

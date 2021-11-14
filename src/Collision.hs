@@ -45,7 +45,7 @@ instance Collision Player where
   getHitBox p@Player {playerPosition = pos} = (pos Vector.- (4, 4), pos Vector.+ (4, 4))
   checkCollision p@Player {playerState = (Living health), playerHitTimer = timer} other
     | timer > 0 = Just p
-    | isColliding (getHitBox p) (getHitBox other) && health == 1 = Just p {playerState = Dying 1}
+    | isColliding (getHitBox p) (getHitBox other) && health == 1 = Just p {playerState = Dying 3}
     | isColliding (getHitBox p) (getHitBox other) = Just p {playerState = Living (health - 1), playerHitTimer = 0.2}
   checkCollision p other = Just p
 

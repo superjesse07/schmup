@@ -31,7 +31,7 @@ step secs gstate@PlayingState {player = p, paused = paused}
   | paused = return gstate
   | otherwise = do
     ps <- stepps secs gstate
-    return $ handleCollision ps
+    return $ explode $ handleCollision ps
 -- if the high scores are empty, save the score and load the high scores from the file system
 step secs gs@GameOverState {finalScore = score, highScores = []} = do
   -- add the score to the file
@@ -76,6 +76,20 @@ stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions
     -- return the modified gamestate
     return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets, explosions = steppedExplosions,fighters = steppedFighters, background = steppedBackground}
 
+
+explode :: GameState -> GameState
+explode gstate@PlayingState {player = player, turrets = turrets, fighters = fighters, explosions = explosions,playingScore = score}
+  | isDead player = GameOverState score [] (assets gstate) (screenSize gstate)
+  | otherwise =  gstate {explosions = explosions ++ newExplosions, playingScore = score + (length newExplosions * 100)}
+  where
+      turretExplosions = map (newExplosion 4 . turretPosition) (filter justDying turrets)
+      fighterExplosions = map (newExplosion 4 . fighterPosition) (filter justDying fighters)
+      playerExplosion
+        | justDying player = [newExplosion 10 (playerPosition player)]
+        | otherwise = []
+      newExplosions = turretExplosions ++ fighterExplosions ++ playerExplosion
+
+
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
 input e gstate = return (inputKey e gstate)
@@ -88,7 +102,7 @@ getPlayState screenSize assets = PlayingState {
     bullets = [],
     turrets = [],
     fighters = [],
-    explosions = [Explosion (0,0) (Animation 0 0) 4],
+    explosions = [],
     playingScore = 0,
     screenSize = screenSize,
     background = []

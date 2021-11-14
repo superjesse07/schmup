@@ -25,6 +25,10 @@ stepExplosion dt (Explosion p (Animation f t) l)
   | t > 0.05 = return [Explosion p (Animation (f Prelude.+ 1) 0) 0]
   | otherwise = return [Explosion p (Animation f (t Prelude.+ dt)) l]
 
+
+newExplosion :: Int -> Vector -> Explosion
+newExplosion amount position = Explosion position (Animation 0 0) amount
+
 spawnExplosion :: Int -> Vector -> IO Explosion
 spawnExplosion amount position = do
   radius <- randomIO :: IO Float
