@@ -6,6 +6,7 @@ import Assets
 import Turret
 import Background
 import Explosion
+import Fighter
 
 data GameState
   = MenuState
@@ -16,7 +17,7 @@ data GameState
       { --elapsedTime :: Float,
         player :: Player,
         turrets :: [Turret],
-        --fighters :: [Fighter],
+        fighters :: [Fighter],
         --tanks :: [Tank],
         --cargoShips :: [CargoShip],
         explosions :: [Explosion],

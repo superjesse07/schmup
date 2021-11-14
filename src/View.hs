@@ -15,6 +15,10 @@ import Gun
 import Model
 import Player
 import Turret
+import Graphics.Gloss.Interface.Environment
+import GHC.Float.RealFracMethods
+import Consts
+import Fighter
 
 view :: GameState -> IO Picture
 view = return . scale windowScaling windowScaling . viewPure
@@ -31,9 +35,10 @@ viewPure GameOverState {finalScore = score, highScores = hi} = Pictures ([messag
     scoreImage = zipWith (\idx img -> translate 0.0 ((- idx) * 15.0 - 30.0) img) [0 .. 10] imageScores
 
 -- show all entities, and the state if paused
-viewPure PlayingState {player = player, assets = assets, bullets = bullets, turrets = turrets, background = background, explosions = explosions, paused = paused, playingScore = score, screenSize = (x, y)} = Pictures (backgroundPictures ++ (scorePicture : playerPicture : pausedPicture : (projectilePictures ++ turretPictures ++ explosionPictures)))
+viewPure PlayingState {player = player, assets = assets, bullets = bullets, turrets = turrets,fighters = fighters, background = background, explosions = explosions, paused = paused, playingScore = score, screenSize = (x, y)} = Pictures (backgroundPictures ++ (scorePicture : playerPicture : pausedPicture : (projectilePictures ++ turretPictures ++ fighterPictures ++ explosionPictures)))
   where
     turretPictures = map (`turretView` assets) turrets
+    fighterPictures = map (`fighterView` assets) fighters
     playerPicture = playerView player assets
     projectilePictures = map (`viewProjectile` assets) bullets
     explosionPictures = map (viewExplosion assets) explosions
