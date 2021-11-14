@@ -87,13 +87,13 @@ stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets, explosion
 explode :: GameState -> GameState
 explode gstate@PlayingState {player = player, turrets = turrets, fighters = fighters, explosions = explosions, cargoDrops = cargoDrops, playingScore = score, cargoShips = cargoShips}
   | isDead player = GameOverState score [] (assets gstate) (screenSize gstate)
-  | otherwise = gstate {explosions = explosions ++ newExplosions ++ playerExplosion, cargoDrops = cargoDrops ++ newCargoDrops, playingScore = score + (length newExplosions * 100)}
+  | otherwise = gstate {explosions = explosions ++ newExplosions ++ playerExplosion, cargoDrops = cargoDrops ++ newCargoDrops, playingScore = score + (length newExplosions * 100)} -- add 100 points for every dead enemy
   where
-    turretExplosions = map (newExplosion 4 . turretPosition) (filter justDying turrets)
-    fighterExplosions = map (newExplosion 4 . fighterPosition) (filter justDying fighters)
-    cargoExplosions = map (newExplosion 4 . cargoShipPosition) (filter justDying cargoShips)
-    newCargoDrops = mapMaybe fromCargoShip (filter justDying cargoShips)
-    playerExplosion
+    turretExplosions = map (newExplosion 4 . turretPosition) (filter justDying turrets) -- spawns explosions for dead turrets
+    fighterExplosions = map (newExplosion 4 . fighterPosition) (filter justDying fighters) -- spawns explosions for dead fighters
+    cargoExplosions = map (newExplosion 4 . cargoShipPosition) (filter justDying cargoShips)-- spawns explosions for dead cargoships
+    newCargoDrops = mapMaybe fromCargoShip (filter justDying cargoShips) -- spawns new cargo drops
+    playerExplosion -- Creates a explosion for the player if they died
       | justDying player = [newExplosion 10 (playerPosition player)]
       | otherwise = []
     newExplosions = turretExplosions ++ fighterExplosions ++ cargoExplosions

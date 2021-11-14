@@ -28,7 +28,7 @@ spawnBackgroundObject screenSize = do
   speed <- randomIO :: IO Float
 
   let position = (int2Float (fst screenSize), (randomHeight * 2 - 1) * int2Float (snd screenSize))
-  return $ Star (fst position / windowScaling, snd position / windowScaling) ((speed + 1) * 100)
+  return $ Star (fst position / windowScaling, snd position / windowScaling) ((speed + 1) * scrollingSpeed * 2)
 
 viewBackground :: Assets -> BackgroundObject -> Picture
 viewBackground assets (Star pos _) = uncurry translate pos (starSprite assets)
