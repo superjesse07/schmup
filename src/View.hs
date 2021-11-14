@@ -23,7 +23,7 @@ view = return . scale windowScaling windowScaling . viewPure
 
 viewPure :: GameState -> Picture
 -- show the main menu
-viewPure MenuState {} = color white (text "Hello world!")
+viewPure MenuState {} = translate (-48) (-8) $ scale 0.1 0.1 $ color white (text "Press enter to start")
 -- show the game over screen, score + high scores, ordered low to high
 viewPure GameOverState {finalScore = score, highScores = hi} = Pictures ([messageImg, scoreImg] ++ scoreImage)
   where
@@ -44,7 +44,7 @@ viewPure PlayingState {player = player, assets = assets, bullets = bullets, turr
     backgroundPictures = map (viewBackground assets) background
     scorePicture = translate (- int2Float x * 0.125 + 5.0) (- int2Float y * 0.125 + 5.0) (scale 0.1 0.1 (color white (text ("Score: " ++ show score ++ " Health: " ++ show (getHealth player)))))
     pausedPicture
-      | paused = color white (text "Paused")
+      | paused = translate (-16) (-8) $ scale 0.1 0.1 $ color white (text "Paused")
       | otherwise = Blank
 
 

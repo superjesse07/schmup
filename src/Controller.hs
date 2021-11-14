@@ -36,7 +36,7 @@ step secs gstate@PlayingState {player = p, paused = paused}
 -- if the high scores are empty, save the score and load the high scores from the file system
 step secs gs@GameOverState {finalScore = score, highScores = []} = do
   -- add the score to the file
-  appendFile "scores.smp" ("\n" ++ show score)
+  appendFile "scores.smp" ( show score ++ "\n")
   -- read the file
   content <- readFile' "scores.smp"
   -- parse it
@@ -63,7 +63,7 @@ stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions
     let (allFighters, fighterProjectiles) = unzip (map (`stepGunUser` dt) (newFighters ++ fighters))
     let allCargoShips = newCargoShips ++ cargoShips
     -- step the player
-    let steppedPlayer = playerStep newPlayer dt
+    let steppedPlayer = playerClamp screenSize (playerStep newPlayer dt)
     -- step the projectiles
     let steppedProjectiles = mapMaybe (stepProjectile dt) (b ++ catMaybes [playerProjectile] ++ catMaybes turretProjectiles ++ catMaybes fighterProjectiles)
     -- step the turrets

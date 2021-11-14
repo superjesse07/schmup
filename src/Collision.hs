@@ -55,7 +55,8 @@ instance Collision Player where
 instance Collision Projectile where
   getHitBox (DefaultProjectile _ _ pos) = (pos Vector.- (1, 1), pos Vector.+ (1, 1))
   getHitBox (BurstProjectile _ _ pos) = (pos Vector.- (1, 1), pos Vector.+ (1, 1))
-  getHitBox (LaserProjectile _ pos _) = (pos Vector.- (1, 1), pos Vector.+ (1, 1))
+  getHitBox (LaserProjectile _ pos _) = (pos Vector.- (0, 1), pos Vector.+ (1000, 1))
+  checkCollision this@LaserProjectile {} _ = Just this
   checkCollision this other
     | isColliding (getHitBox this) (getHitBox other) = Nothing
     | otherwise = Just this

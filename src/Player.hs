@@ -10,6 +10,7 @@ import qualified Graphics.Gloss.Data.Point.Arithmetic as Vector
 import Graphics.Gloss.Interface.IO.Game
 import Gun
 import Model
+import GHC.Float.RealFracMethods (int2Float)
 
 -- player movement speed
 playerMoveSpeed :: Float
@@ -51,6 +52,14 @@ playerStep p@Player {playerState = Dying t} dt
 playerStep p _ = p
 
 
+playerClamp :: (Int, Int) -> Player -> Player
+playerClamp (screenX,screenY) p@Player {playerPosition = pos} = let
+  screenXFloat = int2Float screenX / windowScaling - 8
+  screenYFloat = int2Float screenY / windowScaling - 8
+  clamp size = (max (negate (size/2)) . min (size/2))
+  clampedPos = (clamp screenXFloat (fst pos),clamp screenYFloat (snd pos))
+  in p {playerPosition = clampedPos}
+
 -- bit verbose but hey ho
 playerInput :: Player -> Event -> Player
 -- up
@@ -83,7 +92,7 @@ playerAddVelocity :: Player -> Vector -> Player
 playerAddVelocity p v = p {playerVelocity = v Vector.+ playerVelocity p}
 
 instance Default Player where
-  def = Player (0, 0) (Living 5) (0, 0) (getDefaultGun DefaultType) 0
+  def = Player (0, 0) (Living 5) (0, 0) (getDefaultGun LaserType) 0
 
 instance LivingObject Player where
   isDead (Player _ Dead _ _ _) = True
