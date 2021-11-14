@@ -28,7 +28,7 @@ stepCargoPickup dt (CargoPickup pos cargoType) = CargoPickup (pos `vectorAdd` (-
 
 -- view it
 cargoPickupView :: CargoPickup -> Assets -> Picture 
-cargoPickupView (CargoPickup v _) assets = uncurry translate v (color red (circle 5.0))
+cargoPickupView (CargoPickup v _) assets = uncurry translate v (cargoSprite assets)
 
 -- cargoShip enemy
 data CargoShip = CargoShip
@@ -47,7 +47,7 @@ genNewCargoShips n | n <= 0 = return []
   y <- randomIO :: IO Float
   i <- randomIO :: IO Int
   -- make the wrapped int
-  let wrappedInt = i `mod` 5
+  let wrappedInt = i `mod` 4
   -- make other cargoShips
   rest <- genNewCargoShips (n - 1)
   -- make the cargoShip

@@ -18,8 +18,7 @@ data GunType = LaserType | DefaultType | BurstType
 -- get a type from an int
 typeFromInt :: Int -> Maybe GunType
 typeFromInt 0 = Just LaserType
-typeFromInt 1 = Just DefaultType
-typeFromInt 2 = Just BurstType
+typeFromInt 1 = Just BurstType
 typeFromInt _ = Nothing
 
 -- get the default gun ready

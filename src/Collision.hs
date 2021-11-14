@@ -1,44 +1,42 @@
 module Collision where
 
+import Cargo
+import Data.Maybe (fromMaybe, mapMaybe)
+import Debug.Trace (trace)
+import Fighter
+import GameState
 import Graphics.Gloss.Data.Picture
 import qualified Graphics.Gloss.Data.Point.Arithmetic as Vector
 import Gun
 import Model
 import Player
 import Turret
-import Fighter
-import GameState
-import Data.Maybe (fromMaybe, mapMaybe)
-import Debug.Trace (trace)
-import Cargo
 
 isColliding :: (Vector, Vector) -> (Vector, Vector) -> Bool
 isColliding ((leftA, bottomA), (rightA, topA)) ((leftB, bottomB), (rightB, topB)) = leftA < rightB && rightA > leftB && bottomA < topB && topA > bottomB
 
 handleCollision :: GameState -> GameState
-handleCollision gstate@PlayingState {player = player, turrets = turrets, fighters = fighters, bullets = bullets,cargoShips = cargoShips} = let
-
-  collidedPlayer = collideWith (player) $ filter (not . isPlayerBullet) bullets
-  collidedFighters = mapMaybe (`collideWith` filter isPlayerBullet bullets) fighters
-  collidedTurret = mapMaybe (`collideWith` filter isPlayerBullet bullets) turrets
-  collidedCargoShips = mapMaybe(`collideWith` filter isPlayerBullet bullets) cargoShips
-  collidedBulletsEnemy = mapMaybe (`collideWith` [player]) $ filter (not . isPlayerBullet) bullets
-  collidedBulletsPlayer = mapMaybe ((`collideWithMaybe` cargoShips) . (`collideWithMaybe` fighters) . (`collideWith` turrets)) $ filter isPlayerBullet bullets
-
-
-  in gstate {player = fromMaybe player collidedPlayer, bullets = collidedBulletsEnemy ++ collidedBulletsPlayer,fighters=collidedFighters,turrets = collidedTurret,cargoShips = collidedCargoShips}
-
-
-
+handleCollision gstate@PlayingState {player = p, turrets = turrets, fighters = fighters, bullets = bullets, cargoShips = cargoShips, cargoDrops = cargoDrops}
+  | null collidingCargo = finalGState
+  | otherwise =  finalGState { player = (player finalGState) { playerWeapon = getDefaultGun ( cargoType (head collidingCargo)), playerPowerup = 10}}
+  where
+    collidedPlayer = collideWith (p) $ filter (not . isPlayerBullet) bullets
+    collidedFighters = mapMaybe (`collideWith` filter isPlayerBullet bullets) fighters
+    collidedTurret = mapMaybe (`collideWith` filter isPlayerBullet bullets) turrets
+    collidedCargoShips = mapMaybe (`collideWith` filter isPlayerBullet bullets) cargoShips
+    collidedBulletsEnemy = mapMaybe (`collideWith` [p]) $ filter (not . isPlayerBullet) bullets
+    collidedBulletsPlayer = mapMaybe ((`collideWithMaybe` cargoShips) . (`collideWithMaybe` fighters) . (`collideWith` turrets)) $ filter isPlayerBullet bullets
+    collidingCargo = filter ( isColliding (getHitBox p) . getHitBox) cargoDrops
+    collidedCargo = mapMaybe (`collideWith` [p]) cargoDrops
+    finalGState = gstate {player = fromMaybe p collidedPlayer, bullets = collidedBulletsEnemy ++ collidedBulletsPlayer, fighters = collidedFighters, turrets = collidedTurret, cargoShips = collidedCargoShips, cargoDrops = collidedCargo}
 
 collideWith :: Collision a => Collision b => a -> [b] -> Maybe a
 collideWith a = collideWithMaybe (Just a)
 
-
 collideWithMaybe :: Collision a => Collision b => Maybe a -> [b] -> Maybe a
 collideWithMaybe Nothing _ = Nothing
 collideWithMaybe (Just collider) [] = Just collider
-collideWithMaybe (Just collider) (x:xs) = collideWithMaybe (checkCollision collider x) xs
+collideWithMaybe (Just collider) (x : xs) = collideWithMaybe (checkCollision collider x) xs
 
 class Collision a where
   getHitBox :: a -> (Vector, Vector)
@@ -84,3 +82,9 @@ instance Collision CargoShip where
     | isColliding (getHitBox t) (getHitBox other) && health == 1 = Just t {cargoShipHealth = Dying 1}
     | isColliding (getHitBox t) (getHitBox other) = Just t {cargoShipHealth = Living (health - 1), cargoShipHitTimer = 0.1}
   checkCollision t other = Just t
+
+instance Collision CargoPickup where
+  getHitBox t@CargoPickup {cargoPosition = pos} = (pos Vector.- (4, 4), pos Vector.+ (4, 4))
+  checkCollision this other
+    | isColliding (getHitBox this) (getHitBox other) = Nothing
+    | otherwise = Just this

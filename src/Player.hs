@@ -25,7 +25,8 @@ data Player = Player
     playerState :: LivingState,
     playerVelocity :: Vector,
     playerWeapon :: Gun,
-    playerHitTimer :: Float
+    playerHitTimer :: Float,
+    playerPowerup :: Float
   }
 
 -- shows the player
@@ -40,10 +41,13 @@ playerView _ _ = Blank
 -- steps the player
 playerStep :: Player -> Float -> Player
 -- only move if we are alive TODO put this under movable
-playerStep p@Player {playerState = Living _, playerHitTimer = timer} dt = p {playerPosition = pp Vector.+ ((dt Prelude.* playerMoveSpeed) Vector.* pv), playerHitTimer = timer - dt}
+playerStep p@Player {playerState = Living _, playerHitTimer = timer,playerPowerup = powerUpTimer} dt
+  | powerUpTimer < 0 = updatedPlayer {playerWeapon = getDefaultGun DefaultType}
+  | otherwise = updatedPlayer
   where
     pv = playerVelocity p
     pp = playerPosition p
+    updatedPlayer = p {playerPosition = pp Vector.+ ((dt Prelude.* playerMoveSpeed) Vector.* pv), playerHitTimer = timer - dt, playerPowerup = powerUpTimer - dt}
 -- if we are dying, increase the time since death
 playerStep p@Player {playerState = Dying t} dt
   | t< 0 = p {playerState = Dead}
@@ -92,12 +96,12 @@ playerAddVelocity :: Player -> Vector -> Player
 playerAddVelocity p v = p {playerVelocity = v Vector.+ playerVelocity p}
 
 instance Default Player where
-  def = Player (0, 0) (Living 5) (0, 0) (getDefaultGun LaserType) 0
+  def = Player (0, 0) (Living 5) (0, 0) (getDefaultGun LaserType) 0 0
 
 instance LivingObject Player where
-  isDead (Player _ Dead _ _ _) = True
+  isDead (Player _ Dead _ _ _ _) = True
   isDead _ = False
-  justDying (Player _ (Dying t) _ _ _)
+  justDying (Player _ (Dying t) _ _ _ _)
     | t >= 3 = True
     | otherwise = False
   justDying _ = False

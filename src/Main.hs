@@ -24,6 +24,7 @@ main = do
   bulletSprite <- loadTexture "assets/bullet.png"
   fighterSprite <- loadTexture "assets/fighter.png"
   turretSprite <- loadTexture "assets/turret.png"
+  cargoSprite <- loadTexture "assets/cargo.png"
 
   -- make the assets
   let assets =
@@ -35,7 +36,8 @@ main = do
             cargoShipSprite = cargoShipSprite,
             starSprite = starSprite,
             fighterSprite = fighterSprite,
-            turretSprite = turretSprite
+            turretSprite = turretSprite,
+            cargoSprite = cargoSprite
           }
 
   -- next up, load the actual game
