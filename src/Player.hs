@@ -79,4 +79,4 @@ playerAddVelocity :: Player -> Vector -> Player
 playerAddVelocity p v = p {playerVelocity = v Vector.+ playerVelocity p}
 
 instance Default Player where
-  def = Player (0, 0) (Living 5) (0, 0) (getDefaultGun DefaultType) 5
+  def = Player (0, 0) (Living 5) (0, 0) (getDefaultGun DefaultType) 0
