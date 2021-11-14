@@ -1,13 +1,13 @@
 module GameState where
 
-import Player
-import Gun
 import Assets
-import Turret
 import Background
+import Cargo
 import Explosion
 import Fighter
-import Cargo
+import Gun
+import Player
+import Turret
 
 data GameState
   = MenuState
@@ -15,8 +15,7 @@ data GameState
         screenSize :: (Int, Int)
       }
   | PlayingState
-      { 
-        player :: Player,
+      { player :: Player,
         turrets :: [Turret],
         fighters :: [Fighter],
         cargoShips :: [CargoShip],

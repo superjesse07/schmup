@@ -5,12 +5,12 @@ import Assets
 import Consts
 import Data.Default
 import Debug.Trace
+import GHC.Float.RealFracMethods (int2Float)
 import Graphics.Gloss
 import qualified Graphics.Gloss.Data.Point.Arithmetic as Vector
 import Graphics.Gloss.Interface.IO.Game
 import Gun
 import Model
-import GHC.Float.RealFracMethods (int2Float)
 
 -- player movement speed
 playerMoveSpeed :: Float
@@ -40,8 +40,8 @@ playerView _ _ = Blank
 
 -- steps the player
 playerStep :: Player -> Float -> Player
--- only move if we are alive TODO put this under movable
-playerStep p@Player {playerState = Living _, playerHitTimer = timer,playerPowerup = powerUpTimer} dt
+-- only move if we are alive
+playerStep p@Player {playerState = Living _, playerHitTimer = timer, playerPowerup = powerUpTimer} dt
   | powerUpTimer < 0 = updatedPlayer {playerWeapon = getDefaultGun DefaultType}
   | otherwise = updatedPlayer
   where
@@ -50,19 +50,18 @@ playerStep p@Player {playerState = Living _, playerHitTimer = timer,playerPoweru
     updatedPlayer = p {playerPosition = pp Vector.+ ((dt Prelude.* playerMoveSpeed) Vector.* pv), playerHitTimer = timer - dt, playerPowerup = powerUpTimer - dt}
 -- if we are dying, increase the time since death
 playerStep p@Player {playerState = Dying t} dt
-  | t< 0 = p {playerState = Dead}
+  | t < 0 = p {playerState = Dead}
   | otherwise = p {playerState = Dying (t Prelude.- dt)}
 -- if we are dead, do nothing
 playerStep p _ = p
 
-
 playerClamp :: (Int, Int) -> Player -> Player
-playerClamp (screenX,screenY) p@Player {playerPosition = pos} = let
-  screenXFloat = int2Float screenX / windowScaling - 8
-  screenYFloat = int2Float screenY / windowScaling - 8
-  clamp size = (max (negate (size/2)) . min (size/2))
-  clampedPos = (clamp screenXFloat (fst pos),clamp screenYFloat (snd pos))
-  in p {playerPosition = clampedPos}
+playerClamp (screenX, screenY) p@Player {playerPosition = pos} =
+  let screenXFloat = int2Float screenX / windowScaling - 8
+      screenYFloat = int2Float screenY / windowScaling - 8
+      clamp size = (max (negate (size / 2)) . min (size / 2))
+      clampedPos = (clamp screenXFloat (fst pos), clamp screenYFloat (snd pos))
+   in p {playerPosition = clampedPos}
 
 -- bit verbose but hey ho
 playerInput :: Player -> Event -> Player

@@ -18,7 +18,7 @@ isColliding ((leftA, bottomA), (rightA, topA)) ((leftB, bottomB), (rightB, topB)
 handleCollision :: GameState -> GameState
 handleCollision gstate@PlayingState {player = p, turrets = turrets, fighters = fighters, bullets = bullets, cargoShips = cargoShips, cargoDrops = cargoDrops}
   | null collidingCargo = finalGState
-  | otherwise =  finalGState { player = (player finalGState) { playerWeapon = getDefaultGun ( cargoType (head collidingCargo)), playerPowerup = 10}}
+  | otherwise = finalGState {player = (player finalGState) {playerWeapon = getDefaultGun (cargoType (head collidingCargo)), playerPowerup = 10}}
   where
     collidedPlayer = collideWith (p) $ filter (not . isPlayerBullet) bullets
     collidedFighters = mapMaybe (`collideWith` filter isPlayerBullet bullets) fighters
@@ -26,9 +26,17 @@ handleCollision gstate@PlayingState {player = p, turrets = turrets, fighters = f
     collidedCargoShips = mapMaybe (`collideWith` filter isPlayerBullet bullets) cargoShips
     collidedBulletsEnemy = mapMaybe (`collideWith` [p]) $ filter (not . isPlayerBullet) bullets
     collidedBulletsPlayer = mapMaybe ((`collideWithMaybe` cargoShips) . (`collideWithMaybe` fighters) . (`collideWith` turrets)) $ filter isPlayerBullet bullets
-    collidingCargo = filter ( isColliding (getHitBox p) . getHitBox) cargoDrops
+    collidingCargo = filter (isColliding (getHitBox p) . getHitBox) cargoDrops
     collidedCargo = mapMaybe (`collideWith` [p]) cargoDrops
-    finalGState = gstate {player = fromMaybe p collidedPlayer, bullets = collidedBulletsEnemy ++ collidedBulletsPlayer, fighters = collidedFighters, turrets = collidedTurret, cargoShips = collidedCargoShips, cargoDrops = collidedCargo}
+    finalGState =
+      gstate
+        { player = fromMaybe p collidedPlayer,
+          bullets = collidedBulletsEnemy ++ collidedBulletsPlayer,
+          fighters = collidedFighters,
+          turrets = collidedTurret,
+          cargoShips = collidedCargoShips,
+          cargoDrops = collidedCargo
+        }
 
 collideWith :: Collision a => Collision b => a -> [b] -> Maybe a
 collideWith a = collideWithMaybe (Just a)

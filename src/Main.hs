@@ -2,15 +2,15 @@ module Main where
 
 import Assets
 import Controller
-import Graphics.Gloss
 -- if it doesn't work on linux: run mesa-demo first
 
+import Data.Maybe
+import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
+import Graphics.Gloss.Juicy
 import Model
 import System.Random
 import View
-import Data.Maybe
-import Graphics.Gloss.Juicy
 
 main :: IO ()
 main = do
@@ -56,15 +56,12 @@ loadTexture path = do
   missing <- loadBMP "assets/missing.bmp"
   return $ fromMaybe missing texture
 
-
 loadAnimation :: FilePath -> Int -> IO [Picture]
 loadAnimation path frame = do
   let framepath = path ++ show frame ++ ".png"
   texture <- loadTexture framepath
   if frame == 1
-  then
-    return [texture]
-  else do
-    textures <- loadAnimation path (frame - 1)
-    return $ textures ++ [texture]
-
+    then return [texture]
+    else do
+      textures <- loadAnimation path (frame - 1)
+      return $ textures ++ [texture]

@@ -18,17 +18,16 @@ playerSpeed :: Float
 playerSpeed = 160.0
 
 -- number of turrets
-numTurrets :: Int 
+numTurrets :: Int
 numTurrets = 2
 
 -- number of fighters
-numFighters :: Int 
+numFighters :: Int
 numFighters = 2
 
 -- cargo ships
-numCargoShips :: Int 
+numCargoShips :: Int
 numCargoShips = 4
-
 
 windowScaling :: Float
 windowScaling = 4

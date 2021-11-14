@@ -5,11 +5,9 @@ import Assets
 import Debug.Trace
 import Graphics.Gloss
 
--- ownership, wether the enemy or player owns it
-data OwnerShip = PlayerOwner | EnemyOwner deriving Eq
+-- ownership, whether the enemy or player owns it
+data OwnerShip = PlayerOwner | EnemyOwner deriving (Eq)
 
--- TODO: include whether the weapon is fired (time since firing) and a cooldown
--- then adda  method to fire the weapon and return a maybe projectile
 data Gun = LaserGun Float | DefaultGun Vector Float | BurstGun Vector Float Int
 
 -- gun type
@@ -84,7 +82,7 @@ class GunUser a where
 data Projectile = LaserProjectile OwnerShip Vector Float | DefaultProjectile OwnerShip Vector Vector | BurstProjectile OwnerShip Vector Vector
 
 -- position of the projectile
-projectilePosition :: Projectile -> Vector 
+projectilePosition :: Projectile -> Vector
 projectilePosition (LaserProjectile _ p _) = p
 projectilePosition (DefaultProjectile _ _ p) = p
 projectilePosition (BurstProjectile _ _ p) = p
@@ -116,9 +114,10 @@ stepProjectile dt (BurstProjectile o d v)
   | vectorTooFar v 1000.0 = Nothing
   | otherwise = Just (BurstProjectile o d (v `vectorAdd` (d `vectorMulFloat` (dt * 200.0))))
 
--- view for them 
+-- view for them
 viewProjectile :: Projectile -> Assets -> Picture
 viewProjectile (LaserProjectile _ h t) assets@Assets {laserSprite = ls} = uncurry translate (h `vectorAdd` (500.0, 0.0)) (scale 1000.0 (1.0 - (a * a * a)) ls)
-  where a = 4.0 * t
+  where
+    a = 4.0 * t
 viewProjectile (DefaultProjectile _ _ v) assets@Assets {bulletSprite = bs} = uncurry translate v bs
 viewProjectile (BurstProjectile _ _ v) assets@Assets {bulletSprite = bs} = uncurry translate v bs

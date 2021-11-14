@@ -4,19 +4,19 @@ module View where
 
 import Assets
 import Background
+import Cargo
+import Consts
 import Debug.Trace
 import Explosion
+import Fighter
+import GHC.Float.RealFracMethods
 import GameState
 import Graphics.Gloss
+import Graphics.Gloss.Interface.Environment
 import Gun
 import Model
 import Player
 import Turret
-import Graphics.Gloss.Interface.Environment
-import GHC.Float.RealFracMethods
-import Consts
-import Fighter
-import Cargo
 
 view :: GameState -> IO Picture
 view = return . scale windowScaling windowScaling . viewPure
@@ -33,7 +33,7 @@ viewPure GameOverState {finalScore = score, highScores = hi} = Pictures ([messag
     scoreImage = zipWith (\idx img -> translate 0.0 ((- idx) * 15.0 - 30.0) img) [0 .. 10] imageScores
 
 -- show all entities, and the state if paused
-viewPure PlayingState {player = player, assets = assets, bullets = bullets, turrets = turrets,fighters = fighters, cargoShips = cargoShips, cargoDrops = cargoDrops, background = background, explosions = explosions, paused = paused, playingScore = score, screenSize = (x, y)} = Pictures (backgroundPictures ++ (scorePicture : playerPicture : pausedPicture : (projectilePictures ++ turretPictures ++ fighterPictures ++ cargoShipPictures ++ cargoDropPictures ++ explosionPictures)))
+viewPure PlayingState {player = player, assets = assets, bullets = bullets, turrets = turrets, fighters = fighters, cargoShips = cargoShips, cargoDrops = cargoDrops, background = background, explosions = explosions, paused = paused, playingScore = score, screenSize = (x, y)} = Pictures (backgroundPictures ++ (scorePicture : playerPicture : pausedPicture : (projectilePictures ++ turretPictures ++ fighterPictures ++ cargoShipPictures ++ cargoDropPictures ++ explosionPictures)))
   where
     turretPictures = map (`turretView` assets) turrets
     fighterPictures = map (`fighterView` assets) fighters
@@ -47,7 +47,6 @@ viewPure PlayingState {player = player, assets = assets, bullets = bullets, turr
     pausedPicture
       | paused = translate (-16) (-8) $ scale 0.1 0.1 $ color white (text "Paused")
       | otherwise = Blank
-
 
 getHealth :: Player -> Int
 getHealth Player {playerState = (Living i)} = i
