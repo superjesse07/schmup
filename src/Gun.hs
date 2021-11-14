@@ -15,6 +15,13 @@ data Gun = LaserGun Float | DefaultGun Vector Float | BurstGun Vector Float Int
 -- gun type
 data GunType = LaserType | DefaultType | BurstType
 
+-- get a type from an int
+typeFromInt :: Int -> Maybe GunType
+typeFromInt 0 = Just LaserType
+typeFromInt 1 = Just DefaultType
+typeFromInt 2 = Just BurstType
+typeFromInt _ = Nothing
+
 -- get the default gun ready
 getDefaultGun :: GunType -> Gun
 getDefaultGun LaserType = LaserGun 1.0
@@ -88,8 +95,6 @@ projectileOwner :: Projectile -> OwnerShip
 projectileOwner (LaserProjectile o _ _) = o
 projectileOwner (DefaultProjectile o _ _) = o
 projectileOwner (BurstProjectile o _ _) = o
-
-
 
 isPlayerBullet :: Projectile -> Bool
 isPlayerBullet (LaserProjectile PlayerOwner _ _) = True

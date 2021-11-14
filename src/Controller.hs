@@ -21,6 +21,7 @@ import Background
 import Explosion
 import Fighter
 import Collision
+import Cargo
 
 initialState :: (Int, Int) -> Assets -> GameState
 initialState screenSize assets = MenuState {assets = assets, screenSize = screenSize}
@@ -49,15 +50,18 @@ step secs gstate = return gstate
 
 -- step the playing state
 stepps :: Float -> GameState -> IO GameState
-stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions = explosions, screenSize = screenSize, background = background,fighters = fighters} = do
+stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions = explosions, screenSize = screenSize, background = background, fighters = fighters, cargoShips = cargoShips} = do
     -- generate new turrets, if any, hardcode 3 turrets here
     newTurrets <- genNewTurrets (numTurrets - length turrets)
     -- and fighters
     newFighters <- genNewFighters (numFighters  - length fighters)
+    -- cargo ships
+    newCargoShips <- genNewCargoShips (numCargoShips  - length cargoShips)
     -- step the projectiles
     let (newPlayer, playerProjectile) = stepGunUser p dt
     let (allTurrets, turretProjectiles) = unzip (map (`stepGunUser` dt) (newTurrets ++ turrets))
     let (allFighters, fighterProjectiles) = unzip (map (`stepGunUser` dt) (newFighters ++ fighters))
+    let allCargoShips = newCargoShips ++ cargoShips
     -- step the player
     let steppedPlayer = playerStep newPlayer dt
     -- step the projectiles
@@ -66,15 +70,17 @@ stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions
     let steppedTurrets = mapMaybe (stepTurret dt (playerPosition newPlayer)) allTurrets
     -- things to avoid
     let avoidList = mapMaybe (\x -> if projectileOwner x == PlayerOwner then Just (projectilePosition x) else Nothing) steppedProjectiles ++ [playerPosition newPlayer]
-    -- fightersm also keep distance from all projectiles + player
+    -- cargo ships
+    let steppedCargoShips = mapMaybe (stepCargoShip dt avoidList) allCargoShips
+    -- fighters also keep distance from all projectiles + player
     let steppedFighters = mapMaybe (stepFighter dt avoidList (playerPosition newPlayer)) allFighters
-
+    -- background
     steppedBackground <- backgroundStep screenSize dt background
     mappedExplosions <- mapM (stepExplosion dt) explosions
     let steppedExplosions = concat mappedExplosions
 
     -- return the modified gamestate
-    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets, explosions = steppedExplosions,fighters = steppedFighters, background = steppedBackground}
+    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets, explosions = steppedExplosions,fighters = steppedFighters, background = steppedBackground, cargoShips = steppedCargoShips}
 
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
@@ -91,7 +97,8 @@ getPlayState screenSize assets = PlayingState {
     explosions = [Explosion (0,0) (Animation 0 0) 4],
     playingScore = 0,
     screenSize = screenSize,
-    background = []
+    background = [],
+    cargoShips = []
   }
 
 -- TODO: use monads for this, as it makes it a lot easier to do with do ... return
