@@ -15,14 +15,14 @@ import Player
 import System.IO
 import System.Random
 
-initialState :: StdGen -> Assets -> GameState
+initialState :: IO StdGen -> Assets -> GameState
 initialState gen assets = MenuState {assets = assets, rng = gen}
 
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
 step secs gstate@PlayingState {player = p, paused = paused}
   | paused = return gstate
-  | otherwise = return (stepps secs gstate)
+  | otherwise = stepps secs gstate
 -- if the high scores are empty, save the score and load the high scores from the file system
 step secs gs@GameOverState {finalScore = score, highScores = []} = do
   -- add the score to the file
@@ -39,15 +39,32 @@ step secs gs@GameOverState {finalScore = score, highScores = []} = do
 step secs gstate = return gstate
 
 -- step the playing state
-stepps :: Float -> GameState -> GameState
-stepps dt gs@PlayingState {player = p, bullets = b} = gs {player = steppedPlayer, bullets = steppedProjectiles}
-  where
+stepps :: Float -> GameState -> IO GameState
+stepps dt gs@PlayingState {player = p, bullets = b, turrets = t} = do 
+    -- generate new turrets, if any
+    newTurrets <- genNewTurrets (3 - length t)
+    -- step the projectiles
+    let (newPlayer, playerProjectile) = stepGunUser p dt
     -- step the player
-    steppedPlayer = playerStep newPlayer dt
-    -- and their projectiles
-    (newPlayer, playerProjectile) = stepGunUser p dt
-    -- step the projectiles, and add new if needed
-    steppedProjectiles = mapMaybe (stepProjectile dt) (b ++ catMaybes [playerProjectile])
+    let steppedPlayer = playerStep newPlayer dt 
+    -- step the projectiles
+    let steppedProjectiles = mapMaybe (stepProjectile dt) (b ++ catMaybes  [playerProjectile])
+    -- return the modified gamestate
+    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = newTurrets ++ t}
+
+genNewTurrets :: Int -> IO [Turret]
+genNewTurrets n | n <= 0 = return []
+                | otherwise =  do
+  -- get the random positions
+  x <- randomIO :: IO Float
+  y <- randomIO :: IO Float
+  -- make other turrets
+  rest <- genNewTurrets (n - 1)
+  -- make the turret
+  let turret = Turret (x * 100.0, y * 100.0) 3
+  -- and make all turrets
+  return (turret:rest)
+
 
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
@@ -56,7 +73,7 @@ input e gstate = return (inputKey e gstate)
 -- TODO: use monads for this, as it makes it a lot easier to do with do ... return
 inputKey :: Event -> GameState -> GameState
 -- on enter pressed, switch to the playing state
-inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {rng = x, assets = assets} = PlayingState {rng = x, assets = assets, player = def, paused = False, bullets = []}
+inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {rng = x, assets = assets} = PlayingState {rng = x, assets = assets, player = def, paused = False, bullets = [], turrets = []}
 -- do the same if we are in the game over screen
 -- TODO
 -- check for pausing

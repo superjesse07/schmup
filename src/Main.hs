@@ -12,7 +12,6 @@ import View
 
 main :: IO ()
 main = do
-  rng <- newStdGen -- rng
   -- load the sprites
   playerSprite <- loadBMP "assets/ship.bmp" -- sprites
 
@@ -27,7 +26,7 @@ main = do
     (InWindow "Schmup" (1280, 720) (0, 0)) -- Or FullScreen
     black -- Background color
     60 -- Frames per second
-    (initialState rng assets) -- Initial state
+    (initialState newStdGen assets) -- Initial state
     view -- View function
     input -- Event function
     step -- Step function

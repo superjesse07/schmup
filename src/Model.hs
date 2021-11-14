@@ -16,13 +16,13 @@ data InfoToShow
 
 data GameState
   = MenuState
-      { rng :: StdGen,
+      { rng :: IO StdGen,
         assets :: Assets
       }
   | PlayingState
       { --elapsedTime :: Float,
         player :: Player,
-        --turrets :: [Turret],
+        turrets :: [Turret],
         --fighters :: [Fighter],
         --tanks :: [Tank],
         --cargoShips :: [CargoShip],
@@ -31,13 +31,13 @@ data GameState
         --lasers :: [Laser],
         --playingScore :: Int,
         paused :: Bool,
-        rng :: StdGen,
+        rng :: IO StdGen,
         assets :: Assets
       }
   | GameOverState
       { finalScore :: Int,
         highScores :: [Int],
-        rng :: StdGen,
+        rng :: IO StdGen,
         assets :: Assets
       }
 
