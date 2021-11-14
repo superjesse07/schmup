@@ -31,7 +31,7 @@ genNewFighters n | n <= 0 = return []
   -- make other fighter
   rest <- genNewFighters (n - 1)
   -- make the fighter
-  let fighter = Fighter(x * 700.0 + 200.0, y * 150.0 - 75.0) (Living 3) (getDefaultGun DefaultType) (courage * 70.0 + 50.0) (10000.0, 0.0) 0
+  let fighter = Fighter(x * 500.0 + 600.0, y * 150.0 - 75.0) (Living 3) (getDefaultGun DefaultType) (courage * 70.0 + 50.0) (10000.0, 0.0) 0
   -- and make all fighters
   return (fighter:rest)
 
@@ -49,15 +49,17 @@ stepFighter dt avoid ppos t@(Fighter position (Living l) weapon courage target h
                   | otherwise  = id
    heightDiff = snd target - snd position
    forwardDiff = fst target - fst position
-   targetDir = vectorNormalize (forwardDiff + courage, heightDiff) 
-   moveFunc = case avoidAction dt (courage * 0.5) avoid of 
+   targetPos = (forwardDiff + courage, heightDiff)
+   targetDir = vectorNormalize targetPos 
+   targetSpeed = targetDir `vectorMulFloat` (min (dt * vectorLength targetPos) dt * fighterSpeed) -- should avoid jitter, but doesn't 
+   moveFunc = case avoidAction dt (courage * 0.25) avoid of 
      Nothing -> position `vectorAdd` (targetDir `vectorMulFloat` (dt * fighterSpeed))
      Just dir -> position `vectorAdd` (dir `vectorMulFloat` (dt * fighterSpeed))
 
 -- fighters have a gun, so use that
 instance GunUser Fighter where 
   -- fire the gun at the player
-  fireGun p@Fighter {fighterWeapon = gun, fighterTarget = target, fighterPosition = position} = p {fighterWeapon = setGunFire (-1.0, 0.0) gun} -- not really used because we have fireWeapon
+  fireGun p@Fighter {fighterWeapon = gun, fighterTarget = target, fighterPosition = position} = p {fighterWeapon = setGunFire (-1.0, 0.0) gun} 
   getGun = fighterWeapon
   stepGunUser p@Fighter {fighterPosition = position, fighterWeapon = gun, fighterTarget = target} dt = (p {fighterWeapon = newGun}, newProjectile)
     where

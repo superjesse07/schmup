@@ -15,11 +15,11 @@ playerSpeed = 160.0
 
 -- number of turrets
 numTurrets :: Int 
-numTurrets = 3
+numTurrets = 2
 
 -- number of fighters
 numFighters :: Int 
-numFighters = 4
+numFighters = 2
 
 windowScaling :: Float
 windowScaling = 4
