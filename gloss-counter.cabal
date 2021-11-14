@@ -23,6 +23,7 @@ executable gloss-counter
     Gun
     GameState
     Turret
+    Consts
   hs-source-dirs:      src
   other-modules:       Controller
                      , Model
@@ -33,5 +34,6 @@ executable gloss-counter
                      , Gun
                      , GameState
                      , Turret
+                     , Consts
 
   default-language:    Haskell2010

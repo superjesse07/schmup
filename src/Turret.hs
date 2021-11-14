@@ -3,6 +3,9 @@ module Turret where
 import Graphics.Gloss
 import Assets
 import System.Random
+import Arith
+import Debug.Trace
+import Consts
 
 -- turret enemy
 data Turret = Turret
@@ -20,11 +23,15 @@ genNewTurrets n | n <= 0 = return []
   -- make other turrets
   rest <- genNewTurrets (n - 1)
   -- make the turret
-  let turret = Turret (x * 100.0, y * 100.0) 3
+  let turret = Turret (x * 700.0 + 200.0, y * 150.0 - 75.0) 3
   -- and make all turrets
   return (turret:rest)
 
 -- process a turret
+-- this also takes in the player position, so we can use the gun
+stepTurret :: Float -> Vector -> Turret -> Maybe Turret 
+stepTurret dt ppos t@(Turret p h) | vectorTooFar p 800.0 = Nothing 
+                                  | otherwise            = Just (Turret (p `vectorAdd` (-dt * scrollingSpeed, 0.0)) h)
 
 -- turrets have a gun, so use that
 

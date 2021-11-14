@@ -16,6 +16,7 @@ import System.IO
 import System.Random
 import GameState
 import Turret
+import Consts
 
 initialState :: Assets -> GameState
 initialState assets = MenuState {assets = assets}
@@ -42,17 +43,19 @@ step secs gstate = return gstate
 
 -- step the playing state
 stepps :: Float -> GameState -> IO GameState
-stepps dt gs@PlayingState {player = p, bullets = b, turrets = t} = do 
-    -- generate new turrets, if any
-    newTurrets <- genNewTurrets (3 - length t)
+stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets} = do 
+    -- generate new turrets, if any, hardcode 3 turrets here
+    newTurrets <- genNewTurrets (numTurrets - length turrets)
     -- step the projectiles
     let (newPlayer, playerProjectile) = stepGunUser p dt
     -- step the player
     let steppedPlayer = playerStep newPlayer dt 
     -- step the projectiles
     let steppedProjectiles = mapMaybe (stepProjectile dt) (b ++ catMaybes  [playerProjectile])
+    -- step the turrets
+    let steppedTurrets = mapMaybe (stepTurret dt (playerPosition newPlayer)) (newTurrets ++ turrets)
     -- return the modified gamestate
-    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = newTurrets ++ t}
+    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets}
 
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
