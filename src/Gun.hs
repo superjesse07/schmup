@@ -36,23 +36,23 @@ setGunFire (BurstGun t n)
 
 -- get the projectile
 -- step will automatically make it not fire
-getGunProjectile :: Vector -> Gun -> Maybe Projectile
-getGunProjectile v (LaserGun f)
-  | f == 0.0 = Just (LaserProjectile v 0.0)
+getGunProjectile :: OwnerShip -> Vector -> Gun -> Maybe Projectile
+getGunProjectile o v (LaserGun f)
+  | f == 0.0 = Just (LaserProjectile o v 0.0)
   | otherwise = Nothing
-getGunProjectile v (DefaultGun f)
-  | f == 0.0 = Just (DefaultProjectle v)
+getGunProjectile o v (DefaultGun f)
+  | f == 0.0 = Just (DefaultProjectle o v)
   | otherwise = Nothing
-getGunProjectile v (BurstGun f n)
-  | f == 0.0 && n < 6 = Just (BurstProjectile v)
+getGunProjectile o v (BurstGun f n)
+  | f == 0.0 && n < 6 = Just (BurstProjectile o v)
   | otherwise = Nothing
 
 -- step it so we can increase the time
-stepGun :: Vector -> Gun -> Float -> (Gun, Maybe Projectile)
-stepGun v g@(LaserGun f) dt = (LaserGun (f + dt), getGunProjectile v g)
-stepGun v g@(DefaultGun f) dt = (DefaultGun (f + dt), getGunProjectile v g)
+stepGun :: OwnerShip -> Vector -> Gun -> Float -> (Gun, Maybe Projectile)
+stepGun o v g@(LaserGun f) dt = (LaserGun (f + dt), getGunProjectile o v g)
+stepGun o v g@(DefaultGun f) dt = (DefaultGun (f + dt), getGunProjectile o v g)
 -- this one is special. If the timer is high enough, reset it, and increment n
-stepGun v g@(BurstGun f n) dt = (newGun, getGunProjectile v g)
+stepGun o v g@(BurstGun f n) dt = (newGun, getGunProjectile o v g)
   where
     newGun
       | f > 0.05 && n < 6 = BurstGun 0.0 (n + 1)
@@ -75,25 +75,25 @@ class GunUser a where
 
 -- projectile logic
 -- projectile, aka the thing we fired
-data Projectile = LaserProjectile Vector Float | DefaultProjectle Vector | BurstProjectile Vector
+data Projectile = LaserProjectile OwnerShip Vector Float | DefaultProjectle OwnerShip Vector | BurstProjectile OwnerShip Vector
 
 -- step for them
 stepProjectile :: Float -> Projectile -> Maybe Projectile
 -- laser projectile, fades after 0.5 seconds
-stepProjectile dt (LaserProjectile h t)
-  | t < 0.5 = Just (LaserProjectile h (t + dt))
+stepProjectile dt (LaserProjectile o h t)
+  | t < 0.5 = Just (LaserProjectile o h (t + dt))
   | otherwise = Nothing
 -- default one, dissapears when too far away
-stepProjectile dt (DefaultProjectle v)
+stepProjectile dt (DefaultProjectle o v)
   | vectorTooFar v 1000.0 = Nothing
-  | otherwise = Just (DefaultProjectle (v `vectorAdd` (dt * 300.0, 0.0)))
+  | otherwise = Just (DefaultProjectle o (v `vectorAdd` (dt * 300.0, 0.0)))
 -- same for burst
-stepProjectile dt (BurstProjectile v)
+stepProjectile dt (BurstProjectile o v)
   | vectorTooFar v 1000.0 = Nothing
-  | otherwise = Just (BurstProjectile (v `vectorAdd` (dt * 500.0, 0.0)))
+  | otherwise = Just (BurstProjectile o (v `vectorAdd` (dt * 500.0, 0.0)))
 
 -- view for them
 viewProjectile :: Projectile -> Assets -> Picture
-viewProjectile (LaserProjectile h t) _ = uncurry translate (h `vectorAdd` (500.0, 0.0)) (color (withAlpha (1.0 - 2.0 * t) white) (rectangleSolid 1000.0 0.5))
-viewProjectile (DefaultProjectle v) _ = uncurry translate v (color white (circleSolid 1.0))
-viewProjectile (BurstProjectile v) _ = uncurry translate v (color white (rectangleSolid 2.0 0.5))
+viewProjectile (LaserProjectile o h t) _ = uncurry translate (h `vectorAdd` (500.0, 0.0)) (color (withAlpha (1.0 - 2.0 * t) white) (rectangleSolid 1000.0 0.5))
+viewProjectile (DefaultProjectle o v) _ = uncurry translate v (color white (circleSolid 1.0))
+viewProjectile (BurstProjectile o v) _ = uncurry translate v (color white (rectangleSolid 2.0 0.5))
