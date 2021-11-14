@@ -41,7 +41,7 @@ getGunProjectile o v (LaserGun f)
   | f == 0.0 = Just (LaserProjectile o v 0.0)
   | otherwise = Nothing
 getGunProjectile o v (DefaultGun f)
-  | f == 0.0 = Just (DefaultProjectle o v)
+  | f == 0.0 = Just (DefaultProjectile o v)
   | otherwise = Nothing
 getGunProjectile o v (BurstGun f n)
   | f == 0.0 && n < 6 = Just (BurstProjectile o v)
@@ -75,7 +75,7 @@ class GunUser a where
 
 -- projectile logic
 -- projectile, aka the thing we fired
-data Projectile = LaserProjectile OwnerShip Vector Float | DefaultProjectle OwnerShip Vector | BurstProjectile OwnerShip Vector
+data Projectile = LaserProjectile OwnerShip Vector Float | DefaultProjectile OwnerShip Vector | BurstProjectile OwnerShip Vector
 
 -- step for them
 stepProjectile :: Float -> Projectile -> Maybe Projectile
@@ -84,16 +84,16 @@ stepProjectile dt (LaserProjectile o h t)
   | t < 0.2 = Just (LaserProjectile o h (t + dt))
   | otherwise = Nothing
 -- default one, disappears when too far away
-stepProjectile dt (DefaultProjectle v)
+stepProjectile dt (DefaultProjectile o v)
   | vectorTooFar v 1000.0 = Nothing
-  | otherwise = Just (DefaultProjectle o (v `vectorAdd` (dt * 300.0, 0.0)))
+  | otherwise = Just (DefaultProjectile o (v `vectorAdd` (dt * 300.0, 0.0)))
 -- same for burst
 stepProjectile dt (BurstProjectile o v)
   | vectorTooFar v 1000.0 = Nothing
-  | otherwise = Just (BurstProjectile (v `vectorAdd` (dt * 200.0, 0.0)))
+  | otherwise = Just (BurstProjectile o (v `vectorAdd` (dt * 200.0, 0.0)))
 
 -- view for them 
 viewProjectile :: Projectile -> Assets -> Picture
-viewProjectile (LaserProjectile h t) assets@Assets {laserSprite = ls} = uncurry translate (h `vectorAdd` (500.0, 0.0)) (scale 1000 1 ls)
-viewProjectile (DefaultProjectle v) _ = uncurry translate v (color white (circleSolid 1.0))
-viewProjectile (BurstProjectile v) _ = uncurry translate v (color white (rectangleSolid 2.0 0.5))
+viewProjectile (LaserProjectile _ h t) assets@Assets {laserSprite = ls} = uncurry translate (h `vectorAdd` (500.0, 0.0)) (scale 1000 1 ls)
+viewProjectile (DefaultProjectile _ v) _ = uncurry translate v (color white (circleSolid 1.0))
+viewProjectile (BurstProjectile _ v) _ = uncurry translate v (color white (rectangleSolid 2.0 0.5))

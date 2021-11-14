@@ -4,11 +4,12 @@ module View where
 
 import Assets
 import Debug.Trace
+import Explosion
+import GameState
 import Graphics.Gloss
 import Gun
 import Model
 import Player
-import GameState
 import Turret
 
 view :: GameState -> IO Picture
@@ -26,11 +27,12 @@ viewPure GameOverState {finalScore = score, highScores = hi} = Pictures ([messag
     scoreImage = zipWith (\idx img -> translate 0.0 ((- idx) * 15.0 - 30.0) img) [0 .. 10] imageScores
 
 -- show all entities, and the state if paused
-viewPure PlayingState {player = player, assets = assets, bullets = bullets, turrets = turrets, paused = paused} = Pictures (playerPicture : pausedPicture  : (projectilePictures ++ turretPictures))
+viewPure PlayingState {player = player, assets = assets, bullets = bullets, turrets = turrets, explosions = explosions, paused = paused} = Pictures (playerPicture : pausedPicture : (projectilePictures ++ turretPictures ++ explosionPictures))
   where
     turretPictures = map (`turretView` assets) turrets
     playerPicture = playerView player assets
     projectilePictures = map (`viewProjectile` assets) bullets
+    explosionPictures = map (viewExplosion assets) explosions
     pausedPicture
       | paused = color white (text "Paused")
       | otherwise = Blank

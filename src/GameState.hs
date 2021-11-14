@@ -4,6 +4,7 @@ import Player
 import Gun
 import Assets
 import Turret
+import Explosion
 
 data GameState
   = MenuState
@@ -16,7 +17,7 @@ data GameState
         --fighters :: [Fighter],
         --tanks :: [Tank],
         --cargoShips :: [CargoShip],
-        --explosions :: [Explosion],
+        explosions :: [Explosion],
         bullets :: [Projectile],
         playingScore :: Int,
         paused :: Bool,

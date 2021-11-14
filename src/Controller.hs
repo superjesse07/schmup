@@ -18,6 +18,7 @@ import System.Random
 import GameState
 import Turret
 import Consts
+import Explosion
 
 initialState :: Assets -> GameState
 initialState assets = MenuState {assets = assets}
@@ -44,7 +45,7 @@ step secs gstate = return gstate
 
 -- step the playing state
 stepps :: Float -> GameState -> IO GameState
-stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets} = do 
+stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets,explosions = explosions} = do
     -- generate new turrets, if any, hardcode 3 turrets here
     newTurrets <- genNewTurrets (numTurrets - length turrets)
     -- step the projectiles
@@ -55,8 +56,12 @@ stepps dt gs@PlayingState {player = p, bullets = b, turrets = turrets} = do
     let steppedProjectiles = mapMaybe (stepProjectile dt) (b ++ catMaybes  [playerProjectile])
     -- step the turrets
     let steppedTurrets = mapMaybe (stepTurret dt (playerPosition newPlayer)) (newTurrets ++ turrets)
+
+    mappedExplosions <- mapM (stepExplosion dt) explosions
+    let steppedExplosions = concat mappedExplosions
+
     -- return the modified gamestate
-    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets}
+    return gs {player = steppedPlayer, bullets = steppedProjectiles, turrets = steppedTurrets,explosions = steppedExplosions}
 
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
@@ -65,7 +70,7 @@ input e gstate = return (inputKey e gstate)
 -- TODO: use monads for this, as it makes it a lot easier to do with do ... return
 inputKey :: Event -> GameState -> GameState
 -- on enter pressed, switch to the playing state
-inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {assets = assets} = PlayingState {assets = assets, player = def, paused = False, bullets = [], turrets = [], playingScore = 0}
+inputKey (EventKey (SpecialKey KeyEnter) _ _ _) MenuState {assets = assets} = PlayingState {assets = assets, player = def, paused = False, bullets = [], turrets = [],explosions = [Explosion (0,0) (Animation 0 0) 4], playingScore = 0}
 -- do the same if we are in the game over screen
 -- TODO
 -- check for pausing

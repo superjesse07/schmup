@@ -24,11 +24,6 @@ data Animation = Animation
     animationTimer :: Float
   }
 
-data Explosion = Explosion
-  { explosionAnimation :: Animation,
-    explosionsLeft :: Int
-  }
-
 data Bullet = Bullet
   { bulletPosition :: Vector,
     bulletVelocity :: Vector,
