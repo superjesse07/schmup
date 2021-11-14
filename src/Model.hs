@@ -14,33 +14,6 @@ data InfoToShow
   | ShowANumber Int
   | ShowAChar Char
 
-data GameState
-  = MenuState
-      { rng :: IO StdGen,
-        assets :: Assets
-      }
-  | PlayingState
-      { --elapsedTime :: Float,
-        player :: Player,
-        turrets :: [Turret],
-        --fighters :: [Fighter],
-        --tanks :: [Tank],
-        --cargoShips :: [CargoShip],
-        --explosions :: [Explosion],
-        bullets :: [Projectile],
-        --lasers :: [Laser],
-        --playingScore :: Int,
-        paused :: Bool,
-        rng :: IO StdGen,
-        assets :: Assets
-      }
-  | GameOverState
-      { finalScore :: Int,
-        highScores :: [Int],
-        rng :: IO StdGen,
-        assets :: Assets
-      }
-
 data OwnerShip = PlayerOwner | EnemyOwner
 
 class Damagable a where
